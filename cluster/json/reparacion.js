@@ -113,8 +113,11 @@ window.onload = () => {
 };
 
 // === FUNCIONES AUXILIARES ===
+let contadorID = 0;
+
 function generarID() {
-  return 'FBX-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+  contadorID++;
+  return 'ID-' + contadorID;
 }
 
 function calcularIVA(precio) {
@@ -452,6 +455,8 @@ function exportarSeleccionadaComoImagen(tipo = null) {
 </body>
 </html>
   `;
+
+  
 
   const ventana = window.open('', '', 'width=380,height=700');
   ventana.document.open();
