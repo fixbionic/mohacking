@@ -21,8 +21,8 @@ window.onload = () => {
   mostrarCampoContrasena();
 
   $('tipo-contrasena').addEventListener('change', mostrarCampoContrasena);
-  $('btn-eliminar').addEventListener('click', eliminarSeleccionada);
   $('btn-editar').addEventListener('click', editarSeleccionada);
+  $('btn-eliminar').addEventListener('click', eliminarSeleccionada);
   $('buscarInput').addEventListener('input', e => buscarReparacion(e.target.value));
   $('btn-descargar-imagen').addEventListener('click', () => exportarSeleccionadaComoImagen());
   $('btn-imprimir').addEventListener('click', () => exportarSeleccionadaComoImagen('pos'));
@@ -44,8 +44,8 @@ window.onload = () => {
       tecnico: $('tecnico').value,
       notas: $('notas').value,
       precio: $('precio').value,
-      iva: $('iva').value,
-      controlID: $('controlID').value,
+      iva: calcularIVA($('precio').value),
+      controlID: generarID(),
       estado: $('estado').value,
       contrasena: tipo === 'pin' ? pin : patron
     };
@@ -56,7 +56,7 @@ window.onload = () => {
     actualizarMetricas();
   });
 
-  $('btn-export-json').addEventListener('click', () => {
+  $('btn-guardar-json').addEventListener('click', () => {
     const datos = JSON.parse(localStorage.getItem('reparaciones')) || [];
     const blob = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -64,21 +64,29 @@ window.onload = () => {
     a.href = url;
     a.download = `reparaciones_${new Date().toLocaleDateString('es-CO')}.json`;
     a.click();
-    guardarBackup('Reparaciones', datos);
   });
 
   $('btn-agregar-backup').addEventListener('click', () => {
     const datos = JSON.parse(localStorage.getItem('reparaciones')) || [];
-    guardarBackup('Reparaciones', datos);
-    alert('Copia de seguridad guardada correctamente');
+    const copias = JSON.parse(localStorage.getItem('copiasSeguridad') || '[]');
+    
+    const nuevaCopia = {
+      fecha: new Date().toLocaleString('es-CO'),
+      tipo: 'reparaciones',
+      datos: datos
+    };
+    
+    copias.push(nuevaCopia);
+    localStorage.setItem('copiasSeguridad', JSON.stringify(copias));
+    alert('✅ Copia de seguridad guardada correctamente.');
   });
 
-  $('importarBD').addEventListener('change', function () {
+  $('importarBD').addEventListener('change', function() {
     const archivo = this.files[0];
     if (!archivo) return;
 
     const lector = new FileReader();
-    lector.onload = function (e) {
+    lector.onload = function(e) {
       try {
         const datosImportados = JSON.parse(e.target.result);
         if (!Array.isArray(datosImportados)) throw new Error("Formato incorrecto");
@@ -95,15 +103,24 @@ window.onload = () => {
     lector.readAsText(archivo);
   });
 
-  const btnExport = $('btn-export-excel');
-  const tabla = document.querySelector('table');
-  if (btnExport && tabla) {
-    btnExport.addEventListener('click', () => {
-      const soloUna = confirm('¿Exportar solo la fila seleccionada?\nAceptar: Solo una fila\nCancelar: Toda la tabla');
-      soloUna && filaSeleccionada ? exportarFilaSeleccionadaExcel() : exportarTablaCompletaExcel();
-    });
-  }
+  $('btn-export-excel').addEventListener('click', () => {
+    const soloUna = confirm('¿Exportar solo la fila seleccionada?\nAceptar: Solo una fila\nCancelar: Toda la tabla');
+    soloUna && filaSeleccionada ? exportarFilaSeleccionadaExcel() : exportarTablaCompletaExcel();
+  });
+
+  // Generar ID automático al cargar
+  $('controlID').value = generarID();
 };
+
+// === FUNCIONES AUXILIARES ===
+function generarID() {
+  return 'FBX-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+}
+
+function calcularIVA(precio) {
+  const iva = parseFloat(precio) / 1.19;
+  return isNaN(iva) ? 0 : iva.toFixed(2);
+}
 
 // === PATRÓN / PIN ===
 function mostrarCampoContrasena() {
@@ -138,14 +155,21 @@ function cargarDesdeLocalStorage() {
 function agregarFila(data, guardar = true) {
   const fila = document.createElement('tr');
   fila.innerHTML = `
-    <td>${data.fecha}</td><td>${data.cliente}</td><td>${data.telefono}</td>
-    <td>${data.modelo}</td><td>${data.reparacion}</td><td>${data.tecnico}</td>
-    <td>${data.notas}</td><td>${data.precio}</td><td>${data.iva}</td>
+    <td>${data.fecha}</td>
+    <td>${data.cliente}</td>
+    <td>${data.telefono}</td>
+    <td>${data.modelo}</td>
+    <td>${data.reparacion}</td>
+    <td>${data.tecnico}</td>
+    <td>${data.notas}</td>
+    <td>$${parseFloat(data.precio).toLocaleString('es-CO')}</td>
+    <td>$${data.iva || calcularIVA(data.precio)}</td>
     <td>${data.controlID}</td>
     <td class="${data.estado === 'entregado' ? 'table-success' : data.estado === 'pendiente' ? 'table-warning' : 'table-light'}">
       ${capitalize(data.estado)}
     </td>
-    <td>${data.contrasena || ''}</td>`;
+    <td>${data.contrasena || ''}</td>
+  `;
   fila.onclick = () => seleccionarFila(fila, data);
   $('tabla-reparaciones').appendChild(fila);
 
@@ -161,7 +185,9 @@ function seleccionarFila(fila, data) {
   filaSeleccionada = fila;
   filaSeleccionada.classList.add('table-info');
 
-  for (const key in data) if ($(key)) $(key).value = data[key];
+  for (const key in data) {
+    if ($(key)) $(key).value = data[key];
+  }
 
   const tipo = data.contrasena?.includes('-') ? 'patron' : 'pin';
   $('tipo-contrasena').value = tipo;
@@ -183,7 +209,7 @@ function eliminarSeleccionada() {
   if (!filaSeleccionada) return alert('Selecciona una fila');
   if (prompt('Contraseña para eliminar:') !== passwordEliminar) return alert('Contraseña incorrecta');
 
-  const id = filaSeleccionada.children[9].textContent;
+  const id = filaSeleccionada.querySelector('td:nth-child(10)').textContent;
   filaSeleccionada.remove();
   filaSeleccionada = null;
 
@@ -209,14 +235,14 @@ function editarSeleccionada() {
     tecnico: $('tecnico').value,
     notas: $('notas').value,
     precio: $('precio').value,
-    iva: $('iva').value,
+    iva: calcularIVA($('precio').value),
     controlID: $('controlID').value,
     estado: $('estado').value,
     contrasena: tipo === 'pin' ? $('contrasena').value : $('patron-input').value
   };
 
   const datos = JSON.parse(localStorage.getItem('reparaciones')) || [];
-  const idx = datos.findIndex(d => d.controlID === filaSeleccionada.children[9].textContent);
+  const idx = datos.findIndex(d => d.controlID === filaSeleccionada.querySelector('td:nth-child(10)').textContent);
   if (idx !== -1) datos[idx] = reparacionEditada;
   localStorage.setItem('reparaciones', JSON.stringify(datos));
 
@@ -251,12 +277,22 @@ function actualizarMetricas() {
       datasets: [{
         data: [pendientes, entregadas, total - pendientes - entregadas],
         backgroundColor: ['#ffc107', '#28a745', '#6c757d'],
-        borderColor: ['#fff'], borderWidth: 2
+        borderColor: ['#fff'], 
+        borderWidth: 2
       }]
     },
     options: {
       responsive: true,
-      plugins: { legend: { position: 'bottom' } }
+      plugins: { 
+        legend: { 
+          position: 'bottom',
+          labels: {
+            font: {
+              size: 14
+            }
+          }
+        }
+      }
     }
   });
 }
@@ -274,7 +310,7 @@ function buscarReparacion(valor) {
   });
 }
 
-// === EXPORTACIÓN COMPLETA A EXCEL ===
+// === EXPORTACIÓN A EXCEL ===
 function exportarTablaCompletaExcel() {
   const tabla = document.querySelector('table');
   if (!tabla) return alert('Tabla no encontrada');
@@ -285,7 +321,6 @@ function exportarTablaCompletaExcel() {
   XLSX.writeFile(wb, 'reparaciones_completas.xlsx');
 }
 
-// === EXPORTACIÓN DE UNA FILA SELECCIONADA A EXCEL ===
 function exportarFilaSeleccionadaExcel() {
   if (!filaSeleccionada) return alert('Selecciona una fila primero');
 
@@ -298,34 +333,7 @@ function exportarFilaSeleccionadaExcel() {
   XLSX.writeFile(wb, 'reparacion_individual.xlsx');
 }
 
-// === GUARDAR JSON DE REPARACIONES ===
-document.getElementById("btn-guardar-json").addEventListener("click", () => {
-  const datos = localStorage.getItem("reparaciones") || "[]";
-  const blob = new Blob([datos], { type: "application/json" });
-  const enlace = document.createElement("a");
-  enlace.href = URL.createObjectURL(blob);
-  enlace.download = "reparaciones.json";
-  enlace.click();
-});
-
-// === AGREGAR BACKUP EN LOCALSTORAGE ===
-document.getElementById("btn-agregar-backup").addEventListener("click", () => {
-  const datos = JSON.parse(localStorage.getItem("reparaciones") || "[]");
-  const copias = JSON.parse(localStorage.getItem("copiasSeguridad") || "[]");
-
-  const nuevaCopia = {
-    fecha: new Date().toLocaleString("es-CO"),
-    tipo: "reparaciones",
-    datos
-  };
-
-  copias.push(nuevaCopia);
-  localStorage.setItem("copiasSeguridad", JSON.stringify(copias));
-  alert("✅ Copia de seguridad guardada correctamente.");
-});
-
-
-// === EXPORTAR FACTURA POS DESDE FILA SELECCIONADA ===
+// === EXPORTACIÓN DE IMAGEN/FACTURA ===
 function exportarSeleccionadaComoImagen(tipo = null) {
   if (!filaSeleccionada) return alert('Selecciona una fila');
 
@@ -347,7 +355,6 @@ function exportarSeleccionadaComoImagen(tipo = null) {
       padding: 0;
       background: #fff;
     }
-
     .factura {
       max-width: 280px;
       padding: 10px;
@@ -355,51 +362,24 @@ function exportarSeleccionadaComoImagen(tipo = null) {
       border: 1px solid #000;
       box-sizing: border-box;
     }
-
-    .center {
-      text-align: center;
-    }
-
+    .center { text-align: center; }
     .logo {
       display: block;
       margin: 0 auto 10px auto;
       max-width: 100px;
       height: auto;
     }
-
     .linea {
       border-top: 1px dashed #000;
       margin: 6px 0;
     }
-
-    .campo {
-      margin-bottom: 4px;
-    }
-
+    .campo { margin-bottom: 4px; }
     @media print {
-      @page {
-        size: 70mm auto;
-        margin: 0;
-      }
-
-      body {
-        margin: 0;
-      }
-
-      .factura {
-        border: none;
-        padding: 8px;
-      }
-
-      .logo {
-        max-width: 130px;
-        height: auto;
-        margin-bottom: 10px;
-      }
-
-      .campo {
-        margin-bottom: 5px;
-      }
+      @page { size: 70mm auto; margin: 0; }
+      body { margin: 0; }
+      .factura { border: none; padding: 8px; }
+      .logo { max-width: 130px; height: auto; margin-bottom: 10px; }
+      .campo { margin-bottom: 5px; }
     }
   </style>
 </head>
@@ -429,28 +409,28 @@ function exportarSeleccionadaComoImagen(tipo = null) {
     <div class="campo">Forma de Pago: Contado</div>
     <div class="campo">Medio de Pago: Acuerdo mutuo</div>
 
-    <div class="campo">Vendido por: ${cel[6].textContent}</div>
+    <div class="campo">Vendido por: ${cel[5].textContent}</div>
     <div class="campo">Cliente: ${cel[1].textContent}</div>
     <div class="campo">Teléfono: ${cel[2].textContent}</div>
     <div class="campo">Modelo: ${cel[3].textContent}</div>
     <div class="campo">Reparación: ${cel[4].textContent}</div>
-    <div class="campo">Notas: ${cel[5].textContent}</div>
+    <div class="campo">Notas: ${cel[6].textContent}</div>
 
     <div class="linea"></div>
     <strong>Detalle:</strong><br />
     1 UND ${cel[4].textContent}<br />
-    Precio Unitario: $${parseFloat(cel[7].textContent).toLocaleString()}<br />
-    Valor Total: $${parseFloat(cel[7].textContent).toLocaleString()}<br />
+    Precio Unitario: $${parseFloat(cel[7].textContent.replace('$','')).toLocaleString('es-CO')}<br />
+    Valor Total: $${parseFloat(cel[7].textContent.replace('$','')).toLocaleString('es-CO')}<br />
 
     <div class="linea"></div>
-    <strong>Total a Pagar:</strong> $${parseFloat(cel[7].textContent).toLocaleString()}<br />
+    <strong>Total a Pagar:</strong> $${parseFloat(cel[7].textContent.replace('$','')).toLocaleString('es-CO')}<br />
     Cambio: $0.00<br />
     Total Descuentos: $0.00<br />
 
     <div class="linea"></div>
     <strong>Discriminación Tarifas de IVA:</strong><br />
-    Base: $${parseFloat(cel[8].textContent).toLocaleString()}<br />
-    IVA: $${(parseFloat(cel[7].textContent) - parseFloat(cel[8].textContent)).toLocaleString()}<br />
+    Base: $${parseFloat(cel[8].textContent.replace('$','')).toLocaleString('es-CO')}<br />
+    IVA: $${(parseFloat(cel[7].textContent.replace('$','')) - parseFloat(cel[8].textContent.replace('$',''))).toLocaleString('es-CO')}<br />
 
     <div class="campo">Control ID: ${cel[9].textContent}</div>
     <div class="campo">Estado: ${cel[10].textContent}</div>
@@ -471,11 +451,10 @@ function exportarSeleccionadaComoImagen(tipo = null) {
   </div>
 </body>
 </html>
-`;
+  `;
 
   const ventana = window.open('', '', 'width=380,height=700');
   ventana.document.open();
   ventana.document.write(contenido);
   ventana.document.close();
 }
-

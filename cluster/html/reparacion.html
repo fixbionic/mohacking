@@ -7,6 +7,9 @@
 
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  
+  <!-- Font Awesome para iconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
   <!-- Estilos personalizados -->
   <link rel="stylesheet" href="../styles/reparacion.css" />
@@ -20,29 +23,57 @@
 <body class="bg-body-tertiary text-dark">
   <!-- Sidebar -->
   <div class="sidebar">
-    <h4>Fixbionic</h4>
-    <a class="nav-link" href="../../index.html">Inicio</a>
-    <a class="nav-link" href="acsesorios.html">Accesorios</a>
-    <a class="nav-link" href="estadisticas.html">Estadísticas</a>
-    <a class="nav-link" href="reparacion.html">Reparaciones</a>
+    <h4><i class="fas fa-mobile-alt me-2"></i>Fixbionic</h4>
+    <div class="sidebar-nav">
+      <a class="nav-link" href="../../index.html"><i class="fas fa-home"></i> Inicio</a>
+      <a class="nav-link" href="acsesorios.html"><i class="fas fa-keyboard"></i> Accesorios</a>
+      <a class="nav-link" href="estadisticas.html"><i class="fas fa-chart-bar"></i> Estadísticas</a>
+      <a class="nav-link active" href="reparacion.html"><i class="fas fa-tools"></i> Reparaciones</a>
+    </div>
   </div>
+
+  <!-- Botón para móviles -->
+  <button class="sidebar-toggle d-lg-none btn btn-primary">
+    <i class="fas fa-bars"></i>
+  </button>
 
   <!-- Main Content -->
   <div class="main-content">
-    <h2 class="text-primary mb-4 fw-bold">Registro de Reparaciones</h2>
+    <h2 class="mb-4"><i class="fas fa-tools me-2"></i>Registro de Reparaciones</h2>
+    
     <div class="row g-4">
       <!-- Formulario -->
       <div class="col-lg-8">
-        <form id="formulario" autocomplete="off" class="bg-white p-4 rounded shadow">
+        <form id="formulario" autocomplete="off" class="bg-white p-4 rounded-3 shadow-sm">
           <div class="row g-3">
             <!-- Campos del formulario -->
-            <div class="col-md-6"><input type="date" id="fecha" class="form-control" required></div>
-            <div class="col-md-6"><input type="text" id="cliente" class="form-control" placeholder="Cliente" required></div>
-            <div class="col-md-6"><input type="text" id="telefono" class="form-control" placeholder="Teléfono" required></div>
-            <div class="col-md-6"><input type="text" id="modelo" class="form-control" placeholder="Modelo del celular" required></div>
-            <div class="col-md-6"><input type="text" id="reparacion" class="form-control" placeholder="Tipo de reparación" required></div>
+            <div class="col-md-6">
+              <label for="fecha" class="form-label">Fecha</label>
+              <input type="date" id="fecha" class="form-control" required>
+            </div>
+            
+            <div class="col-md-6">
+              <label for="cliente" class="form-label">Cliente</label>
+              <input type="text" id="cliente" class="form-control" placeholder="Nombre del cliente" required>
+            </div>
+            
+            <div class="col-md-6">
+              <label for="telefono" class="form-label">Teléfono</label>
+              <input type="text" id="telefono" class="form-control" placeholder="Número de contacto" required>
+            </div>
+            
+            <div class="col-md-6">
+              <label for="modelo" class="form-label">Modelo</label>
+              <input type="text" id="modelo" class="form-control" placeholder="Modelo del dispositivo" required>
+            </div>
+            
+            <div class="col-md-6">
+              <label for="reparacion" class="form-label">Reparación</label>
+              <input type="text" id="reparacion" class="form-control" placeholder="Tipo de reparación" required>
+            </div>
 
             <div class="col-md-6">
+              <label for="tecnico" class="form-label">Técnico</label>
               <select id="tecnico" class="form-select" required>
                 <option value="">Selecciona Técnico</option>
                 <option value="Santiago">Santiago</option>
@@ -55,17 +86,28 @@
               </select>
             </div>
 
-            <div class="col-md-12"><input type="text" id="notas" class="form-control" placeholder="Notas adicionales"></div>
-            <div class="col-md-6"><input type="number" id="precio" class="form-control" placeholder="Precio ($)" min="0" step="0.01" required></div>
-            <div class="col-md-6"><input type="number" id="iva" class="form-control" placeholder="IVA (%)" min="0" step="0.01" required></div>
-            <div class="col-md-6"><input type="text" id="controlID" class="form-control" placeholder="Control ID" required></div>
-
-            <div class="col-md-6">
+            <div class="col-12">
+              <label for="notas" class="form-label">Notas</label>
+              <textarea id="notas" class="form-control" placeholder="Notas adicionales" rows="2"></textarea>
+            </div>
+            
+            <div class="col-md-4">
+              <label for="precio" class="form-label">Precio ($)</label>
+              <input type="number" id="precio" class="form-control" placeholder="0.00" min="0" step="0.01" required>
+            </div>
+            
+            <div class="col-md-4">
+              <label for="estado" class="form-label">Estado</label>
               <select id="estado" class="form-select" required>
-                <option value="nulo">No se ha hecho nada</option>
-                <option value="pendiente">Reparado pero no entregado</option>
+                <option value="nulo">No iniciado</option>
+                <option value="pendiente">En proceso</option>
                 <option value="entregado">Entregado</option>
               </select>
+            </div>
+            
+            <div class="col-md-4">
+              <label for="controlID" class="form-label">ID</label>
+              <input type="text" id="controlID" class="form-control" placeholder="Generado automáticamente" readonly>
             </div>
 
             <div class="col-md-6">
@@ -77,73 +119,93 @@
               </select>
             </div>
 
-            <div class="col-md-12">
+            <div class="col-md-6">
+              <label for="contrasena" class="form-label">Contraseña</label>
               <input type="text" id="contrasena" class="form-control" placeholder="PIN o palabra" style="display: none;">
             </div>
 
-            <div class="col-md-12" id="patron-container" style="display: none;">
+            <div class="col-12" id="patron-container" style="display: none;">
+              <label class="form-label">Patrón Gráfico</label>
               <div class="patron-grid">
                 <!-- Patrón gráfico -->
-                ${[1,2,3,4,5,6,7,8,9].map(num => `<button type="button" class="patron-btn" data-num="${num}">${num}</button>`).join('')}
+                <button type="button" class="patron-btn" data-num="1">1</button>
+                <button type="button" class="patron-btn" data-num="2">2</button>
+                <button type="button" class="patron-btn" data-num="3">3</button>
+                <button type="button" class="patron-btn" data-num="4">4</button>
+                <button type="button" class="patron-btn" data-num="5">5</button>
+                <button type="button" class="patron-btn" data-num="6">6</button>
+                <button type="button" class="patron-btn" data-num="7">7</button>
+                <button type="button" class="patron-btn" data-num="8">8</button>
+                <button type="button" class="patron-btn" data-num="9">9</button>
               </div>
-              <small class="text-muted">Haz clic en los puntos en orden para establecer el patrón</small>
+              <small class="text-muted d-block mt-2">Selecciona los puntos en orden para establecer el patrón</small>
               <input type="hidden" id="patron-input" />
-              <p class="text-danger d-none" id="errorPatron">Debe ingresar un patrón válido.</p>
+              <p class="text-danger mt-2 d-none" id="errorPatron">Debe ingresar un patrón válido (mínimo 4 puntos).</p>
             </div>
           </div>
 
-          <!-- Botones -->
+          <!-- Botones principales -->
+          <div class="btn-group-wrap mt-4">
+            <button type="submit" class="btn btn-action btn-primary">
+              <i class="fas fa-plus me-2"></i>Agregar
+            </button>
+            <button type="button" id="btn-editar" class="btn btn-action btn-warning">
+              <i class="fas fa-edit me-2"></i>Editar
+            </button>
+            <button type="button" id="btn-eliminar" class="btn btn-action btn-danger">
+              <i class="fas fa-trash me-2"></i>Eliminar
+            </button>
+          </div>
+          
+          <!-- Botones secundarios -->
           <div class="btn-group-wrap mt-3">
-            <button type="submit" class="btn btn-primary btn-sm">Agregar</button>
-            <button type="button" id="btn-editar" class="btn btn-outline-warning btn-sm">Editar</button>
-            <button type="button" id="btn-eliminar" class="btn btn-outline-danger btn-sm">Eliminar</button>
-            <button type="button" id="btn-export-excel" class="btn btn-success btn-sm">Excel</button>
-            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-exportar-json">JSON</button>
-            <button type="button" id="btn-descargar-imagen" class="btn btn-dark btn-sm">Imagen</button>
-            <button type="button" id="btn-imprimir" class="btn btn-info btn-sm">Imprimir Imagen</button>
-            <input type="file" id="importarBD" class="form-control form-control-sm mt-2" />
-            <input type="text" placeholder="Buscar..." id="buscarInput" class="form-control form-control-sm mt-2" />
+            <button type="button" id="btn-export-excel" class="btn btn-action btn-success">
+              <i class="fas fa-file-excel me-2"></i>Excel
+            </button>
+            <button type="button" class="btn btn-action btn-secondary" data-bs-toggle="modal" data-bs-target="#modal-exportar-json">
+              <i class="fas fa-file-code me-2"></i>JSON
+            </button>
+            <button type="button" id="btn-descargar-imagen" class="btn btn-action btn-dark">
+              <i class="fas fa-image me-2"></i>Imagen
+            </button>
+            <button type="button" id="btn-imprimir" class="btn btn-action btn-info">
+              <i class="fas fa-print me-2"></i>Imprimir
+            </button>
+          </div>
+          
+          <!-- Buscador e importación -->
+          <div class="row mt-3 g-2">
+            <div class="col-md-8">
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                <input type="text" placeholder="Buscar reparaciones..." id="buscarInput" class="form-control">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <input type="file" id="importarBD" class="form-control d-none">
+              <label for="importarBD" class="btn btn-action btn-outline-primary w-100">
+                <i class="fas fa-file-import me-2"></i>Importar
+              </label>
+            </div>
           </div>
         </form>
 
-<!-- Modal Exportar JSON -->
-<div class="modal fade" id="modal-exportar-json" tabindex="-1" aria-labelledby="modalExportarJsonLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border border-dark">
-      <div class="modal-header bg-dark text-white">
-        <h5 class="modal-title" id="modalExportarJsonLabel">Exportar Base de Datos</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <div class="modal-body text-center">
-        ¿Qué deseas hacer con la base de datos actual?
-      </div>
-      <div class="modal-footer justify-content-center">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-        <button class="btn btn-success" id="btn-guardar-json">Guardar JSON</button>
-        <button class="btn btn-primary" id="btn-agregar-backup">Agregar copia de seguridad</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
         <!-- Tabla de reparaciones -->
-        <div class="table-responsive bg-white p-3 rounded shadow mt-4">
-          <table class="table table-bordered table-striped text-center align-middle">
+        <div class="table-responsive bg-white p-3 rounded-3 shadow-sm mt-4">
+          <table class="table table-hover table-bordered align-middle">
             <thead class="table-primary">
               <tr>
-                <th>Fecha</th>
-                <th>Cliente</th>
-                <th>Teléfono</th>
-                <th>Modelo</th>
-                <th>Reparación</th>
-                <th>Técnico</th>
-                <th>Notas</th>
-                <th>Precio</th>
-                <th>IVA (%)</th>
-                <th>Control ID</th>
-                <th>Estado</th>
-                <th>Contraseña</th>
+                <th><i class="fas fa-calendar me-1"></i>Fecha</th>
+                <th><i class="fas fa-user me-1"></i>Cliente</th>
+                <th><i class="fas fa-phone me-1"></i>Teléfono</th>
+                <th><i class="fas fa-mobile me-1"></i>Modelo</th>
+                <th><i class="fas fa-tools me-1"></i>Reparación</th>
+                <th><i class="fas fa-user-cog me-1"></i>Técnico</th>
+                <th><i class="fas fa-sticky-note me-1"></i>Notas</th>
+                <th><i class="fas fa-dollar-sign me-1"></i>Precio</th>
+                <th><i class="fas fa-info-circle me-1"></i>Estado</th>
+                <th><i class="fas fa-key me-1"></i>Contraseña</th>
+                <th><i class="fas fa-cog me-1"></i>Acciones</th>
               </tr>
             </thead>
             <tbody id="tabla-reparaciones"></tbody>
@@ -153,15 +215,62 @@
 
       <!-- Panel derecho -->
       <div class="col-lg-4">
-        <div class="bg-white p-4 rounded shadow text-center h-100">
-          <h5 class="fw-bold text-primary">Resumen de Reparaciones</h5>
-          <canvas id="graficoReparaciones"></canvas>
-          <div class="mt-3">
-            <p class="fw-semibold text-dark">Total: <span id="total-reparaciones">0</span></p>
-            <p class="fw-semibold text-warning">Pendientes: <span id="total-pendientes">0</span></p>
-            <p class="fw-semibold text-success">Entregadas: <span id="total-entregadas">0</span></p>
+        <div class="bg-white p-4 rounded-3 shadow-sm h-100">
+          <h5 class="fw-bold text-primary mb-4"><i class="fas fa-chart-pie me-2"></i>Resumen de Reparaciones</h5>
+          <div class="chart-container">
+            <canvas id="graficoReparaciones"></canvas>
           </div>
-          <div id="contenedor-exportacion" class="mt-3"></div>
+          <div class="stats-container mt-4">
+            <div class="stat-card bg-primary-light">
+              <i class="fas fa-tasks stat-icon"></i>
+              <div>
+                <span class="stat-label">Total</span>
+                <span class="stat-value" id="total-reparaciones">0</span>
+              </div>
+            </div>
+            <div class="stat-card bg-warning-light">
+              <i class="fas fa-clock stat-icon"></i>
+              <div>
+                <span class="stat-label">Pendientes</span>
+                <span class="stat-value" id="total-pendientes">0</span>
+              </div>
+            </div>
+            <div class="stat-card bg-success-light">
+              <i class="fas fa-check-circle stat-icon"></i>
+              <div>
+                <span class="stat-label">Entregadas</span>
+                <span class="stat-value" id="total-entregadas">0</span>
+              </div>
+            </div>
+          </div>
+          <div id="contenedor-exportacion" class="mt-4"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Exportar JSON -->
+  <div class="modal fade" id="modal-exportar-json" tabindex="-1" aria-labelledby="modalExportarJsonLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="modalExportarJsonLabel"><i class="fas fa-file-export me-2"></i>Exportar Base de Datos</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body text-center py-4">
+          <i class="fas fa-database fa-3x text-primary mb-3"></i>
+          <p>¿Qué deseas hacer con la base de datos actual?</p>
+        </div>
+        <div class="modal-footer justify-content-center border-0">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+            <i class="fas fa-times me-2"></i>Cancelar
+          </button>
+          <button type="button" id="btn-guardar-json" class="btn btn-success">
+            <i class="fas fa-save me-2"></i>Guardar JSON
+          </button>
+          <button type="button" id="btn-agregar-backup" class="btn btn-primary">
+            <i class="fas fa-copy me-2"></i>Agregar copia
+          </button>
         </div>
       </div>
     </div>
