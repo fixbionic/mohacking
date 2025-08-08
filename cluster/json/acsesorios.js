@@ -26,12 +26,12 @@ function capturarDatosFormulario() {
   return {
     fecha: $('fechaAcc').value,
     nombre: $('nombreAcc').value,
-    categoria: $('categoriaAcc').value,
+
     precio: $('precioAcc').value,
-    cantidad: $('cantidadAcc').value,
-    observaciones: $('observacionesAcc').value,
+
+
     cliente: $('clienteAcc').value,
-    contacto: $('contactoAcc').value
+
   };
 }
 
@@ -47,9 +47,9 @@ function guardarNuevoAccesorio(e) {
 function agregarFilaAccesorios(data, guardar) {
   const fila = document.createElement('tr');
   fila.innerHTML = `
-    <td>${data.fecha}</td><td>${data.nombre}</td><td>${data.categoria}</td>
-    <td>${data.precio}</td><td>${data.cantidad}</td><td>${data.observaciones}</td>
-    <td>${data.cliente}</td><td>${data.contacto}</td>`;
+    <td>${data.fecha}</td><td>${data.nombre}</td>
+    <td>${data.precio}</td>
+    <td>${data.cliente}</td>`;
   fila.onclick = () => seleccionarFila(fila, data);
   tablaAcc.appendChild(fila);
 
@@ -100,8 +100,8 @@ function editarAccesorioSeleccionado() {
 
   filaSeleccionadaAcc.innerHTML = `
     <td>${nuevo.fecha}</td><td>${nuevo.nombre}</td><td>${nuevo.categoria}</td>
-    <td>${nuevo.precio}</td><td>${nuevo.cantidad}</td><td>${nuevo.observaciones}</td>
-    <td>${nuevo.cliente}</td><td>${nuevo.contacto}</td>`;
+    <td>${nuevo.precio}</td><td>${nuevo.cantidad}</td>
+    <td>${nuevo.cliente}</td>`;
   $('form-accesorios').reset();
   actualizarMetricas();
   filaSeleccionadaAcc = null;

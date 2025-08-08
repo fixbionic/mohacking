@@ -43,23 +43,83 @@
   <!-- Contenido Principal -->
   <main class="main-content">
     <h2 class="text-success mb-4 fw-bold">Registro de Accesorios</h2>
+<!-- Formulario de Accesorios -->
+<form id="form-accesorios" class="bg-white p-4 rounded shadow-sm border mb-4">
+  <div class="row g-3">
+    <!-- Fecha -->
+    <div class="col-md-6">
+      <label for="fechaAcc" class="form-label fw-bold">Fecha</label>
+      <input 
+        type="date" 
+        id="fechaAcc" 
+        class="form-control" 
+        required
+      />
+    </div>
 
-    <!-- Formulario -->
-    <form id="form-accesorios" class="bg-white p-4 rounded shadow mb-4">
-      <div class="row g-3">
-        <div class="col-md-6"><input type="date" id="fechaAcc" class="form-control" required /></div>
-        <div class="col-md-6"><input type="text" id="nombreAcc" class="form-control" placeholder="Nombre del Accesorio" required /></div>
-        <div class="col-md-6"><input type="text" id="categoriaAcc" class="form-control" placeholder="Categoría" required /></div>
-        <div class="col-md-6"><input type="number" id="precioAcc" class="form-control" placeholder="Precio (COP)" required /></div>
-        <div class="col-md-6"><input type="number" id="cantidadAcc" class="form-control" placeholder="Cantidad" required /></div>
-        <div class="col-md-6"><input type="text" id="observacionesAcc" class="form-control" placeholder="Observaciones" /></div>
-        <div class="col-md-6"><input type="text" id="clienteAcc" class="form-control" placeholder="Nombre del Cliente" /></div>
-        <div class="col-md-6"><input type="text" id="contactoAcc" class="form-control" placeholder="Número de Contacto" /></div>
-      </div>
+    <!-- Nombre del accesorio -->
+    <div class="col-md-6">
+      <label for="nombreAcc" class="form-label fw-bold">Nombre del accesorio</label>
+      <select id="nombreAcc" class="form-select" required>
+        <option value="">Seleccionar...</option>
+        <option value="Cargador rápido">Cargador rápido</option>
+        <option value="Cable USB-C">Cable USB-C</option>
+        <option value="Cable Lightning">Cable Lightning</option>
+        <option value="Cable Micro-USB">Cable Micro-USB</option>
+        <option value="Audífonos Bluetooth">Audífonos Bluetooth</option>
+        <option value="Audífonos con cable">Audífonos con cable</option>
+        <option value="Funda protectora">Funda protectora</option>
+        <option value="Vidrio templado">Vidrio templado</option>
+        <option value="Cargador inalámbrico">Cargador inalámbrico</option>
+        <option value="Batería externa">Batería externa</option>
+        <option value="Hidro">Hidro gel</option>
+      </select>
+    </div>
+
+    <!-- Precio -->
+    <div class="col-md-6">
+      <label for="precioAcc" class="form-label fw-bold">Precio (COP)</label>
+      <select id="precioAcc" class="form-select" required>
+        <option value="">Seleccionar...</option>
+        <option value="10000">10.000</option>
+        <option value="15000">15.000</option>
+        <option value="20000">20.000</option>
+        <option value="25000">25.000</option>
+        <option value="30000">30.000</option>
+        <option value="40000">40.000</option>
+        <option value="50000">50.000</option>
+        <option value="60000">60.000</option>
+        <option value="80000">80.000</option>
+        <option value="100000">100.000</option>
+      </select>
+    </div>
+
+    <!-- Cliente -->
+    <div class="col-md-6">
+      <label for="clienteAcc" class="form-label fw-bold">De - Para
+      </label>
+      <input 
+        type="text" 
+        id="clienteAcc" 
+        class="form-control" 
+        placeholder="Ej: Juan Pérez" 
+        maxlength="50"
+        required
+      />
+    </div>
+  </div>
+
+  <!-- Botón de envío -->
+  <div class="mt-4 text-end">
+    <button type="submit" class="btn btn-primary px-4">
+      Guardar
+    </button>
+  </div>
+</form>
+
 
       <!-- Botones del formulario -->
       <div class="btn-group mt-3 flex-wrap">
-        <button type="submit" class="btn btn-success btn-sm">Agregar</button>
         <button type="button" id="btnEditar" class="btn btn-warning btn-sm">Editar</button>
         <button type="button" id="btnEliminar" class="btn btn-danger btn-sm">Eliminar</button>
         <button type="button" id="exportarImagenBtn" class="btn btn-dark btn-sm">Imagen</button>
@@ -80,12 +140,9 @@
               <tr>
                 <th>Fecha</th>
                 <th>Nombre</th>
-                <th>Categoría</th>
-                <th>Precio</th>
-                <th>Cantidad</th>
-                <th>Observaciones</th>
-                <th>Cliente</th>
-                <th>Contacto</th>
+                <th>precio</th>
+                <th>Nombre</th>
+
               </tr>
             </thead>
             <tbody id="tabla-accesorios"></tbody>
