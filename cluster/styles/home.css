@@ -1,10 +1,22 @@
+/* =========================================================
+   Ultra Minimalist Elegance - Dual Page Design System
+   Theme: Monochrome Red Harmony
+   Version: 7.0 Pure Contrast
+   Features:
+   - Absolute minimalism
+   - Perfect visual hierarchy
+   - Micro-interactions
+   - Adaptive white space
+   - Monochromatic red palette
+   ========================================================= */
+
 /* =================== BASE =================== */
 body {
   font-family: 'Segoe UI', sans-serif;
-  background: #f8f9fa;
+  background: #000;
   margin: 0;
   padding: 2vw;
-  color: #333;
+  color: #fff;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -14,26 +26,27 @@ body {
 
 /* =================== NAVBAR =================== */
 .navbar {
-  background-color: #198754;
+  background-color: #dc3545;
   width: 100%;
   position: absolute;
   top: 0;
 }
 .navbar-brand {
   font-weight: bold;
+  color: #fff;
 }
 
 /* =================== TITULOS =================== */
 h2, h3 {
-  color: #222;
+  color: #fff;
   margin-bottom: 1em;
   font-size: clamp(1.4rem, 2vw, 2rem);
 }
 
 /* =================== LOGIN =================== */
 .login-card {
-  background: #fff;
-  border: 2px solid #19875440;
+  background: #000;
+  border: 2px solid #dc354540;
   border-radius: 15px;
   padding: 2rem;
   max-width: 800px;
@@ -44,13 +57,13 @@ h2, h3 {
 }
 .login-icon {
   font-size: 3rem;
-  color: #198754;
+  color: #dc3545;
   margin-bottom: 10px;
 }
 
 /* =================== FORMULARIO =================== */
 form {
-  background: white;
+  background: #000;
   padding: 1.5em;
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
@@ -64,6 +77,9 @@ form input,
 form select {
   flex: 1 1 180px;
   min-width: 140px;
+  background: #222;
+  color: #fff;
+  border: 1px solid #444;
 }
 input, select, button {
   padding: 0.7em 1em;
@@ -72,8 +88,8 @@ input, select, button {
   border-radius: 6px;
 }
 button {
-  background-color: #007bff;
-  color: white;
+  background-color: #dc3545;
+  color: #fff;
   cursor: pointer;
   border: none;
   padding: 0.75em 1.4em;
@@ -81,7 +97,7 @@ button {
   transition: background-color 0.2s ease-in-out;
 }
 button:hover {
-  background-color: #0056b3;
+  background-color: #bb2d3b;
 }
 
 /* =================== CONTENEDOR RESPONSIVO =================== */
@@ -101,42 +117,43 @@ button:hover {
 table {
   width: 100%;
   border-collapse: collapse;
-  background-color: white;
+  background-color: #000;
   border-radius: 8px;
   overflow: hidden;
   font-size: 0.95rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   margin-bottom: 1.5em;
+  border: 1px solid #444;
 }
 th, td {
   padding: 0.8em 1em;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #444;
   text-align: center;
   vertical-align: middle;
   font-size: 1rem;
   font-weight: 500;
-  color: #333;
+  color: #fff;
   letter-spacing: 0.02em;
   line-height: 1.5;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 th {
-  background-color: #333;
-  color: white;
+  background-color: #dc3545;
+  color: #fff;
 }
 
 /* =================== ESTADOS =================== */
 .estado-entregado {
-  background-color: #c8e6c9;
+  background-color: #330a0a;
 }
 .estado-pendiente {
-  background-color: #fff3cd;
+  background-color: #331100;
 }
 .estado-nulo {
-  background-color: #f8d7da;
+  background-color: #330000;
 }
 .seleccionada {
-  background-color: #ffe082 !important;
+  background-color: #661111 !important;
 }
 
 /* =================== GRÁFICOS Y MÉTRICAS =================== */
@@ -157,35 +174,36 @@ th {
 #metricas table {
   margin-top: 1em;
   font-size: 0.9rem;
-  border: 1px solid #ccc;
+  border: 1px solid #444;
   border-radius: 6px;
   overflow: hidden;
   width: 100%;
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.04);
 }
 #metricas th {
-  background-color: #007bff;
-  color: white;
+  background-color: #dc3545;
+  color: #fff;
   padding: 0.6em;
 }
 #metricas td {
   padding: 0.6em;
   text-align: center;
-  background-color: #fdfdfd;
+  background-color: #111;
 }
 
 /* =================== TARJETAS DE MÓDULOS =================== */
 .module-card {
   transition: transform 0.3s ease;
-  border: 1px solid #19875420;
+  border: 1px solid #dc354520;
+  background-color: #000;
 }
 .module-card:hover {
   transform: scale(1.03);
-  box-shadow: 0 0 10px rgba(25, 135, 84, 0.3);
+  box-shadow: 0 0 10px rgba(220, 53, 69, 0.3);
 }
 .card-icon {
   font-size: 3rem;
-  color: #198754;
+  color: #dc3545;
 }
 
 /* =================== EFECTO SHAKE =================== */
@@ -205,7 +223,7 @@ footer {
   text-align: center;
   padding: 1rem;
   font-size: 0.9rem;
-  color: #6c757d;
+  color: #aaa;
   margin-top: 3rem;
 }
 

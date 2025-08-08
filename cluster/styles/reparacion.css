@@ -4,6 +4,7 @@
    Versión: 7.0 Monocromatic Supreme
    ========================================================= */
 
+
 :root {
   --primary-color: #157347;
   --primary-hover: #0d5c3a;
@@ -30,6 +31,7 @@ body {
   color: var(--dark-text);
   line-height: 1.65;
   font-weight: 350;
+  color: white;
 }
 
 /* Barra Lateral Neo-Minimalista */
