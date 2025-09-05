@@ -1,248 +1,393 @@
-/* =========================================================
-   Estilos Ultra Minimalistas V2 - CSS3 Pure Elegance Pro
-   Tema: Verde Neo-Minimalista Avanzado
-   Versión: 7.0 Monocromatic Supreme
-   ========================================================= */
+    /* =========================================================
+       Estilos Ultra Minimalistas V2 - CSS3 Pure Elegance Pro
+       Tema: Verde Neo-Minimalista Avanzado
+       Versión: 7.0 Monocromatic Supreme
+       ========================================================= */
 
+    :root {
+      --primary-color: #157347;
+      --primary-hover: #0d5c3a;
+      --primary-light: rgba(21, 115, 71, 0.08);
+      --secondary-color: #0a58ca;
+      --warning-color: #e6a800;
+      --warning-light: rgba(230, 168, 0, 0.08);
+      --danger-color: #c82333;
+      --success-light: rgba(21, 115, 71, 0.08);
+      --light-bg: #f9fbfd;
+      --dark-text: #1a1e21;
+      --gray-text: #5a6a7a;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --transition: all 0.25s cubic-bezier(0.37, 0, 0.63, 1);
+      --border-radius: 0.375rem;
+    }
 
-:root {
-  --primary-color: #157347;
-  --primary-hover: #0d5c3a;
-  --primary-light: rgba(21, 115, 71, 0.08);
-  --secondary-color: #0a58ca;
-  --warning-color: #e6a800;
-  --warning-light: rgba(230, 168, 0, 0.08);
-  --danger-color: #c82333;
-  --success-light: rgba(21, 115, 71, 0.08);
-  --light-bg: #f9fbfd;
-  --dark-text: #1a1e21;
-  --gray-text: #5a6a7a;
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --transition: all 0.25s cubic-bezier(0.37, 0, 0.63, 1);
-  --border-radius: 0.375rem;
-}
+    /* Estructura Base */
+    body {
+      overflow-x: hidden;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--light-bg);
+      color: var(--dark-text);
+      line-height: 1.65;
+      font-weight: 350;
+      color: white;
+    }
 
-/* Estructura Base */
-body {
-  overflow-x: hidden;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background-color: var(--light-bg);
-  color: var(--dark-text);
-  line-height: 1.65;
-  font-weight: 350;
-  color: white;
-}
+    /* Barra Lateral Neo-Minimalista */
+    .sidebar {
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 260px;
+      background-color: var(--primary-color);
+      color: white;
+      padding: 1.75rem 1.25rem;
+      box-shadow: none;
+      z-index: 1000;
+      transition: var(--transition);
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+    }
 
-/* Barra Lateral Neo-Minimalista */
-.sidebar {
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 260px;
-  background-color: var(--primary-color);
-  color: white;
-  padding: 1.75rem 1.25rem;
-  box-shadow: none;
-  z-index: 1000;
-  transition: var(--transition);
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
-}
+    .sidebar h4 {
+      margin-bottom: 1.75rem;
+      font-size: 1.375rem;
+      font-weight: 450;
+      padding-bottom: 0.875rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      letter-spacing: -0.5px;
+    }
 
-.sidebar h4 {
-  margin-bottom: 1.75rem;
-  font-size: 1.375rem;
-  font-weight: 450;
-  padding-bottom: 0.875rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  display: flex;
-  align-items: center;
-  letter-spacing: -0.5px;
-}
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.375rem;
+    }
 
-.sidebar-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 0.375rem;
-}
+    .sidebar a {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      padding: 0.625rem 0.875rem;
+      border-radius: var(--border-radius);
+      transition: var(--transition);
+      font-size: 0.9375rem;
+    }
 
-.sidebar a {
-  color: rgba(255, 255, 255, 0.9);
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  padding: 0.625rem 0.875rem;
-  border-radius: var(--border-radius);
-  transition: var(--transition);
-  font-size: 0.9375rem;
-}
+    .sidebar a.active {
+      background-color: rgba(255, 255, 255, 0.12);
+      font-weight: 400;
+    }
 
-.sidebar a.active {
-  background-color: rgba(255, 255, 255, 0.12);
-  font-weight: 400;
-}
+    .sidebar a:hover, .sidebar a:focus {
+      background-color: rgba(255, 255, 255, 0.08);
+      transform: translateX(3px);
+    }
 
-.sidebar a:hover, .sidebar a:focus {
-  background-color: rgba(255, 255, 255, 0.08);
-  transform: translateX(3px);
-}
+    .sidebar a i {
+      width: 18px;
+      text-align: center;
+      font-size: 0.9375rem;
+    }
 
-.sidebar a i {
-  width: 18px;
-  text-align: center;
-  font-size: 0.9375rem;
-}
+    /* Contenido Principal */
+    .main-content {
+      margin-left: 260px;
+      padding: 1.75rem;
+      min-height: 100vh;
+      transition: var(--transition);
+      background-color: var(--light-bg);
+    }
 
-/* Contenido Principal */
-.main-content {
-  margin-left: 260px;
-  padding: 1.75rem;
-  min-height: 100vh;
-  transition: var(--transition);
-  background-color: var(--light-bg);
-}
+    .main-content h2 {
+      font-weight: 450;
+      color: var(--primary-color);
+      margin-bottom: 1.25rem;
+      font-size: 1.625rem;
+      letter-spacing: -0.25px;
+    }
 
-.main-content h2 {
-  font-weight: 450;
-  color: var(--primary-color);
-  margin-bottom: 1.25rem;
-  font-size: 1.625rem;
-  letter-spacing: -0.25px;
-}
+    /* Componentes de Formulario */
+    .form-control, .form-select {
+      border-radius: var(--border-radius);
+      padding: 0.4375rem 0.875rem;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      transition: var(--transition);
+      background-color: white;
+      font-size: 0.9375rem;
+    }
 
-/* Componentes de Formulario */
-.form-control, .form-select {
-  border-radius: var(--border-radius);
-  padding: 0.4375rem 0.875rem;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  transition: var(--transition);
-  background-color: white;
-  font-size: 0.9375rem;
-}
+    .form-control:focus, .form-select:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(21, 115, 71, 0.15);
+      outline: none;
+    }
 
-.form-control:focus, .form-select:focus {
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 2px rgba(21, 115, 71, 0.15);
-  outline: none;
-}
+    label {
+      font-weight: 400;
+      margin-bottom: 0.375rem;
+      color: var(--gray-text);
+      font-size: 0.9375rem;
+    }
 
-label {
-  font-weight: 400;
-  margin-bottom: 0.375rem;
-  color: var(--gray-text);
-  font-size: 0.9375rem;
-}
+    /* Botones Elegantes */
+    .btn-action {
+      padding: 0.4375rem 1.125rem;
+      border-radius: var(--border-radius);
+      font-weight: 400;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9375rem;
+      border: 1px solid transparent;
+    }
 
-/* Botones Elegantes */
-.btn-action {
-  padding: 0.4375rem 1.125rem;
-  border-radius: var(--border-radius);
-  font-weight: 400;
-  transition: var(--transition);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.9375rem;
-  border: 1px solid transparent;
-}
+    .btn-action i {
+      font-size: 0.8125rem;
+      margin-right: 0.375rem;
+    }
 
-.btn-action i {
-  font-size: 0.8125rem;
-  margin-right: 0.375rem;
-}
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      color: white;
+    }
 
-.btn-primary {
-  background-color: var(--primary-color);
-  border-color: var(--primary-color);
-  color: white;
-}
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+      border-color: var(--primary-hover);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+    }
 
-.btn-primary:hover {
-  background-color: var(--primary-hover);
-  border-color: var(--primary-hover);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
-}
+    /* Tablas Invisibles */
+    .table {
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      background-color: white;
+      border: 1px solid rgba(0, 0, 0, 0.03);
+    }
 
-/* Tablas Invisibles */
-.table {
-  border-radius: var(--border-radius);
-  overflow: hidden;
-  background-color: white;
-  border: 1px solid rgba(0, 0, 0, 0.03);
-}
+    .table th {
+      font-weight: 400;
+      white-space: nowrap;
+      background-color: rgba(0, 0, 0, 0.02);
+      color: var(--gray-text);
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
+    }
 
-.table th {
-  font-weight: 400;
-  white-space: nowrap;
-  background-color: rgba(0, 0, 0, 0.02);
-  color: var(--gray-text);
-  padding: 0.75rem 1rem;
-  font-size: 0.875rem;
-}
+    .table td {
+      padding: 0.625rem 1rem;
+      border-top: 1px solid rgba(0, 0, 0, 0.03);
+      font-size: 0.9375rem;
+    }
 
-.table td {
-  padding: 0.625rem 1rem;
-  border-top: 1px solid rgba(0, 0, 0, 0.03);
-  font-size: 0.9375rem;
-}
+    .table-hover tbody tr:hover {
+      background-color: rgba(21, 115, 71, 0.03);
+    }
 
-.table-hover tbody tr:hover {
-  background-color: rgba(21, 115, 71, 0.03);
-}
+    /* Scrollbar Minimalista */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
 
-/* Scrollbar Minimalista */
-::-webkit-scrollbar {
-  width: 6px;
-}
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.02);
+    }
 
-::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.02);
-}
+    ::-webkit-scrollbar-thumb {
+      background: rgba(21, 115, 71, 0.3);
+      border-radius: 3px;
+    }
 
-::-webkit-scrollbar-thumb {
-  background: rgba(21, 115, 71, 0.3);
-  border-radius: 3px;
-}
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(21, 115, 71, 0.5);
+    }
 
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(21, 115, 71, 0.5);
-}
+    /* Animaciones Sutiles */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-/* Animaciones Sutiles */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(5px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+    .fade-in {
+      animation: fadeIn 0.25s ease-out;
+    }
 
-.fade-in {
-  animation: fadeIn 0.25s ease-out;
-}
+    /* Utilidades */
+    .shadow-soft {
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02), 
+                  0 2px 4px rgba(0, 0, 0, 0.02),
+                  0 4px 8px rgba(0, 0, 0, 0.02);
+    }
 
-/* Responsive Design */
-@media (max-width: 992px) {
-  .sidebar {
-    transform: translateX(-100%);
-    width: 240px;
-  }
-  
-  .main-content {
-    padding: 1.25rem;
-  }
-}
+    .layer-1 {
+      background-color: white;
+      border: 1px solid rgba(0, 0, 0, 0.03);
+      border-radius: var(--border-radius);
+      padding: 1.25rem;
+    }
 
-/* Utilidades */
-.shadow-soft {
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02), 
-              0 2px 4px rgba(0, 0, 0, 0.02),
-              0 4px 8px rgba(0, 0, 0, 0.02);
-}
+    /* Botón de menú móvil */
+    .mobile-menu-btn {
+      display: none;
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1100;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius);
+      padding: 0.5rem 0.75rem;
+      font-size: 1.25rem;
+      cursor: pointer;
+    }
 
-.layer-1 {
-  background-color: white;
-  border: 1px solid rgba(0, 0, 0, 0.03);
-  border-radius: var(--border-radius);
-  padding: 1.25rem;
-}
+    /* Overlay para móviles */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+
+    /* Media Queries para Responsividad */
+    /* Tablets (768px - 992px) */
+    @media (max-width: 992px) {
+      .sidebar {
+        transform: translateX(-100%);
+        width: 240px;
+      }
+      
+      .sidebar.active {
+        transform: translateX(0);
+      }
+      
+      .main-content {
+        margin-left: 0;
+        padding: 1.25rem;
+      }
+      
+      .mobile-menu-btn {
+        display: block;
+      }
+      
+      .sidebar-overlay.active {
+        display: block;
+      }
+      
+      .table-responsive {
+        overflow-x: auto;
+      }
+    }
+
+    /* Teléfonos grandes (576px - 768px) */
+    @media (max-width: 768px) {
+      .main-content {
+        padding: 1rem;
+      }
+      
+      .main-content h2 {
+        font-size: 1.5rem;
+      }
+      
+      .layer-1 {
+        padding: 1rem;
+      }
+      
+      .sidebar {
+        width: 220px;
+        padding: 1.5rem 1rem;
+      }
+      
+      .sidebar h4 {
+        font-size: 1.25rem;
+      }
+      
+      .sidebar a {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+      }
+      
+      .btn-action {
+        padding: 0.375rem 1rem;
+        font-size: 0.875rem;
+      }
+    }
+
+    /* Teléfonos pequeños (hasta 576px) */
+    @media (max-width: 576px) {
+      .main-content {
+        padding: 0.75rem;
+      }
+      
+      .main-content h2 {
+        font-size: 1.375rem;
+        margin-bottom: 1rem;
+      }
+      
+      .layer-1 {
+        padding: 0.75rem;
+      }
+      
+      .form-control, .form-select {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.875rem;
+      }
+      
+      .table th, .table td {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8125rem;
+      }
+      
+      .btn-action {
+        width: 100%;
+        margin-bottom: 0.5rem;
+      }
+      
+      .btn-group .btn-action {
+        width: auto;
+      }
+    }
+
+    /* Ajustes para tablets en orientación horizontal */
+    @media (min-width: 768px) and (max-width: 992px) and (orientation: landscape) {
+      .sidebar {
+        width: 220px;
+      }
+      
+      .main-content {
+        padding: 1.25rem;
+      }
+    }
+
+    /* Ajustes para dispositivos con altura limitada */
+    @media (max-height: 500px) {
+      .sidebar {
+        overflow-y: auto;
+      }
+      
+      .sidebar h4 {
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+      }
+      
+      .sidebar-nav {
+        gap: 0.25rem;
+      }
+      
+      .sidebar a {
+        padding: 0.5rem 0.75rem;
+      }
+    }
