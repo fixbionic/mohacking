@@ -275,6 +275,52 @@
       </div>
     </div>
   </div>
+<script>
+  (function () {
+    let esperandoNumero = false;
+
+    document.addEventListener("keydown", function (event) {
+      // Si presiona la tecla ESPACIO
+      if (event.code === "Space") {
+        event.preventDefault(); // Evita el scroll
+        esperandoNumero = true;
+        console.log("Presiona un número del 1 al 7...");
+        return;
+      }
+
+      // Si está esperando un número
+      if (esperandoNumero) {
+        esperandoNumero = false;
+
+        switch (event.key) {
+          case "1":
+            document.querySelector("button[type='submit']").click();
+            break;
+          case "2":
+            document.getElementById("btn-editar").click();
+            break;
+          case "3":
+            document.getElementById("btn-eliminar").click();
+            break;
+          case "4":
+            document.getElementById("btn-export-excel").click();
+            break;
+          case "5":
+            document.querySelector("button[data-bs-target='#modal-exportar-json']").click();
+            break;
+          case "6":
+            document.getElementById("btn-descargar-imagen").click();
+            break;
+          case "7":
+            document.getElementById("btn-imprimir").click();
+            break;
+          default:
+            console.log("Número no válido.");
+        }
+      }
+    });
+  })();
+</script>
 
   <!-- Scripts -->
   <script src="../json/reparacion.js"></script>
