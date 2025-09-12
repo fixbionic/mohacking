@@ -21,16 +21,67 @@
 </head>
 
 <body class="bg-body-tertiary text-dark">
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <h4><i class="fas fa-mobile-alt me-2"></i>Fixbionic</h4>
-    <div class="sidebar-nav">
-      <a class="nav-link" href="../../index.html"><i class="fas fa-home"></i> Inicio</a>
-      <a class="nav-link" href="acsesorios.html"><i class="fas fa-keyboard"></i> Accesorios</a>
-      <a class="nav-link" href="estadisticas.html"><i class="fas fa-chart-bar"></i> Estadísticas</a>
-      <a class="nav-link active" href="reparacion.html"><i class="fas fa-tools"></i> Reparaciones</a>
+<!-- Sidebar -->
+<div class="sidebar">
+  <h4><i class="fas fa-mobile-alt me-2"></i> Fixbionic</h4>
+
+  <div class="sidebar-nav">
+    <a class="nav-link" href="../../index.html">
+      <i class="fas fa-home"></i> Inicio
+    </a>
+    <a class="nav-link" href="accesorios.html">
+      <i class="fas fa-keyboard"></i> Accesorios
+    </a>
+    <a class="nav-link" href="estadisticas.html">
+      <i class="fas fa-chart-bar"></i> Estadísticas
+    </a>
+    <a class="nav-link active" href="reparacion.html">
+      <i class="fas fa-tools"></i> Reparaciones
+    </a>
+
+    <!-- Botón para abrir el modal -->
+    <button type="button" class="btn btn-info mt-3" data-bs-toggle="modal" data-bs-target="#modal-info">
+      <i class="fas fa-info-circle me-2"></i> Ver funciones del sistema
+    </button>
+  </div>
+</div>
+
+<!-- Modal de información -->
+<div class="modal fade" id="modal-info" tabindex="-1" aria-labelledby="modalInfoLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      
+      <!-- Header -->
+      <div class="modal-header bg-info text-white">
+        <h5 class="modal-title" id="modalInfoLabel">
+          <i class="fas fa-keyboard me-2"></i> Funciones del sistema
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      
+      <!-- Body -->
+      <div class="modal-body">
+        <p>Para activar funciones rápidamente puedes usar las siguientes combinaciones de teclas:</p>
+        <ul class="list-group">
+          <li class="list-group-item"><strong>ESPACIO + 1:</strong> Agregar</li>
+          <li class="list-group-item"><strong>ESPACIO + 2:</strong> Editar</li>
+          <li class="list-group-item"><strong>ESPACIO + 3:</strong> Eliminar</li>
+          <li class="list-group-item"><strong>ESPACIO + 4:</strong> Exportar a Excel</li>
+          <li class="list-group-item"><strong>ESPACIO + 5:</strong> Exportar a JSON</li>
+          <li class="list-group-item"><strong>ESPACIO + 6:</strong> Descargar imagen</li>
+          <li class="list-group-item"><strong>ESPACIO + 7:</strong> Imprimir</li>
+        </ul>
+        <hr>
+        <p><strong>Nota:</strong> Siempre debes presionar primero la tecla <kbd>ESPACIO</kbd> y luego el número deseado.</p>
+      </div>
+      
+      <!-- Footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
     </div>
   </div>
+</div>
 
   <!-- Botón para móviles -->
   <button class="sidebar-toggle d-lg-none btn btn-primary">
