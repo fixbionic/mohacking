@@ -159,6 +159,7 @@ function agregarFila(data, guardar = true) {
   const fila = document.createElement('tr');
   fila.innerHTML = `
     <td>${data.fecha}</td>
+    <td>${data.hora || ''}</td>
     <td>${data.cliente}</td>
     <td>${data.telefono}</td>
     <td>${data.modelo}</td>
@@ -173,8 +174,11 @@ function agregarFila(data, guardar = true) {
     </td>
     <td>${data.contrasena || ''}</td>
   `;
+
   fila.onclick = () => seleccionarFila(fila, data);
-  $('tabla-reparaciones').appendChild(fila);
+
+  // 👇 Aquí el cambio clave: usar prepend en lugar de appendChild
+  $('tabla-reparaciones').prepend(fila);
 
   if (guardar) {
     const datos = JSON.parse(localStorage.getItem('reparaciones')) || [];
@@ -182,6 +186,7 @@ function agregarFila(data, guardar = true) {
     localStorage.setItem('reparaciones', JSON.stringify(datos));
   }
 }
+
 
 function seleccionarFila(fila, data) {
   if (filaSeleccionada) filaSeleccionada.classList.remove('table-info');
@@ -408,7 +413,9 @@ function exportarSeleccionadaComoImagen(tipo = null) {
     <div class="linea"></div>
     <div class="center"><strong>Factura Electrónica de Venta</strong></div>
     <div class="campo">Número: FE ${facturaID}</div>
-    <div class="campo">Fecha: ${fecha}</div>
+
+<div class="campo">Fecha: ${fecha} ${cel[1].textContent}</div> <!-- 👈 usa fecha + hora -->
+
     <div class="campo">Forma de Pago: Contado</div>
     <div class="campo">Medio de Pago: Acuerdo mutuo</div>
 
