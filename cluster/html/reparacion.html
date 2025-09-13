@@ -118,11 +118,48 @@
               <input type="text" id="modelo" class="form-control" placeholder="Modelo del dispositivo" required>
             </div>
             
-            <div class="col-md-6">
-              <label for="reparacion" class="form-label">Reparación</label>
-              <input type="text" id="reparacion" class="form-control" placeholder="Tipo de reparación" required>
-            </div>
+<div class="col-md-6">
+  <label for="reparacion" class="form-label">Tipo de reparación</label>
+  <select id="reparacion" class="form-select" required>
+    <option value="" selected disabled>Seleccione el tipo de reparación</option>
+    <option value="pantalla">Cambio de pantalla</option>
+    <option value="bateria">Reemplazo de batería</option>
+    <option value="conector">Reparación de conector de carga</option>
+    <option value="camara">Reparación de cámara</option>
+    <option value="software">Problemas de software</option>
+    <option value="audio">Problemas de audio/altavoz</option>
+    <option value="microfono">Reparación de micrófono</option>
+    <option value="botones">Reparación de botones</option>
+    <option value="agua">Daño por agua</option>
+    <option value="general">Reparación general/revisión</option>
+    <option value="otros">Otro</option>
+  </select>
+  
+  <!-- Campo de texto que aparece solo cuando se selecciona "Otros" -->
+  <div id="otraReparacionContainer" class="mt-2" style="display: none;">
+    <label for="otraReparacion" class="form-label">Especifique el tipo de reparación</label>
+    <input type="text" id="otraReparacion" class="form-control" placeholder="Describa el tipo de reparación">
+  </div>
+</div>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const selectReparacion = document.getElementById('reparacion');
+  const otraReparacionContainer = document.getElementById('otraReparacionContainer');
+  const inputOtraReparacion = document.getElementById('otraReparacion');
+  
+  selectReparacion.addEventListener('change', function() {
+    if (this.value === 'otros') {
+      otraReparacionContainer.style.display = 'block';
+      inputOtraReparacion.setAttribute('required', 'required');
+    } else {
+      otraReparacionContainer.style.display = 'none';
+      inputOtraReparacion.removeAttribute('required');
+      inputOtraReparacion.value = '';
+    }
+  });
+});
+</script>
             <div class="col-md-6">
               <label for="tecnico" class="form-label">Técnico</label>
               <select id="tecnico" class="form-select" required>
@@ -255,7 +292,6 @@
                 <th><i class="fas fa-user-cog me-1"></i>Técnico</th>
                 <th><i class="fas fa-sticky-note me-1"></i>Notas</th>
                 <th><i class="fas fa-dollar-sign me-1"></i>Precio</th>
-                <th><i class="fas fa-info-circle me-1"></i>Estado</th>
                 <th><i class="fas fa-key me-1"></i>Contraseña</th>
                 <th><i class="fas fa-cog me-1"></i>Acciones</th>
               </tr>

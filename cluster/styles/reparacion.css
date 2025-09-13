@@ -391,3 +391,38 @@
         padding: 0.5rem 0.75rem;
       }
     }
+    /* Estilos para el temporizador */
+.timer-display {
+    font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background-color: #e9ecef;
+    display: inline-block;
+    min-width: 70px;
+    text-align: center;
+    font-family: monospace;
+}
+
+.timer-warning {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.timer-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.timer-completed {
+    background-color: #6f42c1 !important;
+    color: white !important;
+}
+
+.timer-completed td {
+    color: white !important;
+    border-color: #5a359c !important;
+}
+
+.timer-active {
+    background-color: #e8f4fd !important;
+}

@@ -19,7 +19,7 @@ window.onload = () => {
   actualizarMetricas();
   manejarPatron();
   mostrarCampoContrasena();
-
+  
   $('tipo-contrasena').addEventListener('change', mostrarCampoContrasena);
   $('btn-editar').addEventListener('click', editarSeleccionada);
   $('btn-eliminar').addEventListener('click', eliminarSeleccionada);
@@ -27,113 +27,150 @@ window.onload = () => {
   $('btn-descargar-imagen').addEventListener('click', () => exportarSeleccionadaComoImagen());
   $('btn-imprimir').addEventListener('click', () => exportarSeleccionadaComoImagen('pos'));
 
-  $('formulario').addEventListener('submit', e => {
-    e.preventDefault();
-    const tipo = $('tipo-contrasena').value;
-    const patron = $('patron-input').value;
-    const pin = $('contrasena').value;
+  // Verificar que los elementos existen antes de agregar event listeners
+  if ($('tipo-contrasena')) {
+    $('tipo-contrasena').addEventListener('change', mostrarCampoContrasena);
+  }
 
-    if (tipo === 'patron' && !patron.trim()) return $('errorPatron').style.display = 'block';
+  if ($('btn-editar')) {
+    $('btn-editar').addEventListener('click', editarSeleccionada);
+  }
 
-    const nuevaReparacion = {
-      fecha: $('fecha').value,
-      cliente: $('cliente').value,
-      telefono: $('telefono').value,
-      modelo: $('modelo').value,
-      reparacion: $('reparacion').value,
-      tecnico: $('tecnico').value,
-      notas: $('notas').value,
-      precio: $('precio').value,
-      iva: calcularIVA($('precio').value),
-      controlID: generarID(),
-      estado: $('estado').value,
-      contrasena: tipo === 'pin' ? pin : patron
-    };
+  if ($('btn-eliminar')) {
+    $('btn-eliminar').addEventListener('click', eliminarSeleccionada);
+  }
 
-    agregarFila(nuevaReparacion, true);
-    $('formulario').reset();
-    mostrarCampoContrasena();
-    actualizarMetricas();
-  });
+  if ($('buscarInput')) {
+    $('buscarInput').addEventListener('input', e => buscarReparacion(e.target.value));
+  }
 
-  $('btn-guardar-json').addEventListener('click', () => {
-    const datos = JSON.parse(localStorage.getItem('reparaciones')) || [];
-    const blob = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `reparaciones_${new Date().toLocaleDateString('es-CO')}.json`;
-    a.click();
-  });
+  if ($('formulario')) {
+    $('formulario').addEventListener('submit', e => {
+      e.preventDefault();
+      const tipo = $('tipo-contrasena') ? $('tipo-contrasena').value : 'pin';
+      const patron = $('patron-input') ? $('patron-input').value : '';
+      const pin = $('contrasena') ? $('contrasena').value : '';
 
-  $('btn-agregar-backup').addEventListener('click', () => {
-    const datos = JSON.parse(localStorage.getItem('reparaciones')) || [];
-    const copias = JSON.parse(localStorage.getItem('copiasSeguridad') || '[]');
-    
-    const nuevaCopia = {
-      fecha: new Date().toLocaleString('es-CO'),
-      tipo: 'reparaciones',
-      datos: datos
-    };
-    
-    copias.push(nuevaCopia);
-    localStorage.setItem('copiasSeguridad', JSON.stringify(copias));
-    alert('✅ Copia de seguridad guardada correctamente.');
-  });
-
-  $('importarBD').addEventListener('change', function() {
-    const archivo = this.files[0];
-    if (!archivo) return;
-
-    const lector = new FileReader();
-    lector.onload = function(e) {
-      try {
-        const datosImportados = JSON.parse(e.target.result);
-        if (!Array.isArray(datosImportados)) throw new Error("Formato incorrecto");
-
-        localStorage.setItem('reparaciones', JSON.stringify(datosImportados));
-        $('tabla-reparaciones').innerHTML = '';
-        datosImportados.forEach(d => agregarFila(d, false));
-        actualizarMetricas();
-        alert("Datos importados correctamente.");
-      } catch {
-        alert("Error al importar: El archivo no es válido.");
+      if (tipo === 'patron' && !patron.trim()) {
+        if ($('errorPatron')) $('errorPatron').style.display = 'block';
+        return;
       }
-    };
-    lector.readAsText(archivo);
-  });
 
-  $('btn-export-excel').addEventListener('click', () => {
-    const soloUna = confirm('¿Exportar solo la fila seleccionada?\nAceptar: Solo una fila\nCancelar: Toda la tabla');
-    soloUna && filaSeleccionada ? exportarFilaSeleccionadaExcel() : exportarTablaCompletaExcel();
-  });
+      const nuevaReparacion = {
+        fecha: $('fecha') ? $('fecha').value : '',
+        hora: new Date().toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' }),
+        cliente: $('cliente') ? $('cliente').value : '',
+        telefono: $('telefono') ? $('telefono').value : '',
+        modelo: $('modelo') ? $('modelo').value : '',
+        reparacion: $('reparacion') ? $('reparacion').value : '',
+        tecnico: $('tecnico') ? $('tecnico').value : '',
+        notas: $('notas') ? $('notas').value : '',
+        precio: $('precio') ? $('precio').value : '0',
+        iva: calcularIVA($('precio') ? $('precio').value : '0'),
+        controlID: generarID(),
+        estado: $('estado') ? $('estado').value : 'pendiente',
+        contrasena: tipo === 'pin' ? pin : patron
+      };
+
+      agregarFila(nuevaReparacion, true);
+      if ($('formulario')) $('formulario').reset();
+      mostrarCampoContrasena();
+      actualizarMetricas();
+    });
+  }
+
+  if ($('btn-guardar-json')) {
+    $('btn-guardar-json').addEventListener('click', () => {
+      const datos = JSON.parse(localStorage.getItem('reparaciones')) || [];
+      const blob = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `reparaciones_${new Date().toLocaleDateString('es-CO')}.json`;
+      a.click();
+    });
+  }
+
+  if ($('btn-agregar-backup')) {
+    $('btn-agregar-backup').addEventListener('click', () => {
+      const datos = JSON.parse(localStorage.getItem('reparaciones')) || [];
+      const copias = JSON.parse(localStorage.getItem('copiasSeguridad') || '[]');
+
+      const nuevaCopia = {
+        fecha: new Date().toLocaleString('es-CO'),
+        tipo: 'reparaciones',
+        datos: datos
+      };
+
+      copias.push(nuevaCopia);
+      localStorage.setItem('copiasSeguridad', JSON.stringify(copias));
+      alert('✅ Copia de seguridad guardada correctamente.');
+    });
+  }
+
+  if ($('importarBD')) {
+    $('importarBD').addEventListener('change', function () {
+      const archivo = this.files[0];
+      if (!archivo) return;
+
+      const lector = new FileReader();
+      lector.onload = function (e) {
+        try {
+          const datosImportados = JSON.parse(e.target.result);
+          if (!Array.isArray(datosImportados)) throw new Error("Formato incorrecto");
+
+          localStorage.setItem('reparaciones', JSON.stringify(datosImportados));
+          if ($('tabla-reparaciones')) $('tabla-reparaciones').innerHTML = '';
+          datosImportados.forEach(d => agregarFila(d, false));
+          actualizarMetricas();
+          alert("Datos importados correctamente.");
+        } catch (error) {
+          console.error("Error al importar:", error);
+          alert("Error al importar: El archivo no es válido.");
+        }
+      };
+      lector.readAsText(archivo);
+    });
+  }
+
+  if ($('btn-export-excel')) {
+    $('btn-export-excel').addEventListener('click', () => {
+      const soloUna = confirm('¿Exportar solo la fila seleccionada?\nAceptar: Solo una fila\nCancelar: Toda la tabla');
+      soloUna && filaSeleccionada ? exportarFilaSeleccionadaExcel() : exportarTablaCompletaExcel();
+    });
+  }
 
   // Generar ID automático al cargar
-  $('controlID').value = generarID();
+  if ($('controlID')) {
+    $('controlID').value = generarID();
+  }
 };
 
 // === FUNCIONES AUXILIARES ===
-let contadorID = 0;
+let contadorID = localStorage.getItem('contadorID') ? parseInt(localStorage.getItem('contadorID')) : 0;
 
 function generarID() {
   contadorID++;
+  localStorage.setItem('contadorID', contadorID.toString());
   return 'ID-' + contadorID;
 }
 
 function calcularIVA(precio) {
-  const iva = parseFloat(precio) / 1.19;
+  const iva = parseFloat(precio) * 0.19;
   return isNaN(iva) ? 0 : iva.toFixed(2);
 }
 
 // === PATRÓN / PIN ===
 function mostrarCampoContrasena() {
+  if (!$('tipo-contrasena')) return;
+
   const tipo = $('tipo-contrasena').value;
-  $('contrasena').style.display = tipo === 'pin' ? 'block' : 'none';
-  $('patron-container').style.display = tipo === 'patron' ? 'block' : 'none';
-  $('errorPatron').style.display = 'none';
+  if ($('contrasena')) $('contrasena').style.display = tipo === 'pin' ? 'block' : 'none';
+  if ($('patron-container')) $('patron-container').style.display = tipo === 'patron' ? 'block' : 'none';
+  if ($('errorPatron')) $('errorPatron').style.display = 'none';
   state.set('patronActual', []);
   qsa('.patron-btn').forEach(b => b.classList.remove('active'));
-  $('patron-input').value = '';
+  if ($('patron-input')) $('patron-input').value = '';
 }
 
 function manejarPatron() {
@@ -143,7 +180,7 @@ function manejarPatron() {
       if (!state.patronActual.includes(val)) {
         state.patronActual.push(val);
         btn.classList.add('active');
-        $('patron-input').value = state.patronActual.join('-');
+        if ($('patron-input')) $('patron-input').value = state.patronActual.join('-');
       }
     });
   });
@@ -156,6 +193,8 @@ function cargarDesdeLocalStorage() {
 }
 
 function agregarFila(data, guardar = true) {
+  if (!$('tabla-reparaciones')) return;
+
   const fila = document.createElement('tr');
   fila.innerHTML = `
     <td>${data.fecha}</td>
@@ -167,7 +206,6 @@ function agregarFila(data, guardar = true) {
     <td>${data.tecnico}</td>
     <td>${data.notas}</td>
     <td>$${parseFloat(data.precio).toLocaleString('es-CO')}</td>
-    <td>$${data.iva || calcularIVA(data.precio)}</td>
     <td>${data.controlID}</td>
     <td class="${data.estado === 'entregado' ? 'table-success' : data.estado === 'pendiente' ? 'table-warning' : 'table-light'}">
       ${capitalize(data.estado)}
@@ -177,7 +215,6 @@ function agregarFila(data, guardar = true) {
 
   fila.onclick = () => seleccionarFila(fila, data);
 
-  // 👇 Aquí el cambio clave: usar prepend en lugar de appendChild
   $('tabla-reparaciones').prepend(fila);
 
   if (guardar) {
@@ -186,7 +223,6 @@ function agregarFila(data, guardar = true) {
     localStorage.setItem('reparaciones', JSON.stringify(datos));
   }
 }
-
 
 function seleccionarFila(fila, data) {
   if (filaSeleccionada) filaSeleccionada.classList.remove('table-info');
@@ -198,18 +234,18 @@ function seleccionarFila(fila, data) {
   }
 
   const tipo = data.contrasena?.includes('-') ? 'patron' : 'pin';
-  $('tipo-contrasena').value = tipo;
+  if ($('tipo-contrasena')) $('tipo-contrasena').value = tipo;
   mostrarCampoContrasena();
 
   if (tipo === 'patron') {
     const patron = data.contrasena.split('-');
     state.set('patronActual', patron);
-    $('patron-input').value = data.contrasena;
+    if ($('patron-input')) $('patron-input').value = data.contrasena;
     qsa('.patron-btn').forEach(btn => {
       btn.classList.toggle('active', patron.includes(btn.dataset.num));
     });
   } else {
-    $('contrasena').value = data.contrasena;
+    if ($('contrasena')) $('contrasena').value = data.contrasena;
   }
 }
 
@@ -217,7 +253,7 @@ function eliminarSeleccionada() {
   if (!filaSeleccionada) return alert('Selecciona una fila');
   if (prompt('Contraseña para eliminar:') !== passwordEliminar) return alert('Contraseña incorrecta');
 
-  const id = filaSeleccionada.querySelector('td:nth-child(10)').textContent;
+  const id = filaSeleccionada.querySelector('td:nth-child(11)').textContent;
   filaSeleccionada.remove();
   filaSeleccionada = null;
 
@@ -233,31 +269,32 @@ function editarSeleccionada() {
   if (!filaSeleccionada) return alert('Selecciona una fila');
   if (prompt('Contraseña para editar:') !== passwordEliminar) return alert('Contraseña incorrecta');
 
-  const tipo = $('tipo-contrasena').value;
+  const tipo = $('tipo-contrasena') ? $('tipo-contrasena').value : 'pin';
   const reparacionEditada = {
-    fecha: $('fecha').value,
-    cliente: $('cliente').value,
-    telefono: $('telefono').value,
-    modelo: $('modelo').value,
-    reparacion: $('reparacion').value,
-    tecnico: $('tecnico').value,
-    notas: $('notas').value,
-    precio: $('precio').value,
-    iva: calcularIVA($('precio').value),
-    controlID: $('controlID').value,
-    estado: $('estado').value,
-    contrasena: tipo === 'pin' ? $('contrasena').value : $('patron-input').value
+    fecha: $('fecha') ? $('fecha').value : '',
+    hora: new Date().toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' }),
+    cliente: $('cliente') ? $('cliente').value : '',
+    telefono: $('telefono') ? $('telefono').value : '',
+    modelo: $('modelo') ? $('modelo').value : '',
+    reparacion: $('reparacion') ? $('reparacion').value : '',
+    tecnico: $('tecnico') ? $('tecnico').value : '',
+    notas: $('notas') ? $('notas').value : '',
+    precio: $('precio') ? $('precio').value : '0',
+    iva: calcularIVA($('precio') ? $('precio').value : '0'),
+    controlID: $('controlID') ? $('controlID').value : generarID(),
+    estado: $('estado') ? $('estado').value : 'pendiente',
+    contrasena: tipo === 'pin' ? ($('contrasena') ? $('contrasena').value : '') : ($('patron-input') ? $('patron-input').value : '')
   };
-
+  
   const datos = JSON.parse(localStorage.getItem('reparaciones')) || [];
-  const idx = datos.findIndex(d => d.controlID === filaSeleccionada.querySelector('td:nth-child(10)').textContent);
+  const idx = datos.findIndex(d => d.controlID === filaSeleccionada.querySelector('td:nth-child(11)').textContent);
   if (idx !== -1) datos[idx] = reparacionEditada;
   localStorage.setItem('reparaciones', JSON.stringify(datos));
 
   filaSeleccionada.remove();
   agregarFila(reparacionEditada, false);
   alert('Reparación actualizada');
-  $('formulario').reset();
+  if ($('formulario')) $('formulario').reset();
   mostrarCampoContrasena();
   filaSeleccionada = null;
   actualizarMetricas();
@@ -270,9 +307,9 @@ function actualizarMetricas() {
   const pendientes = datos.filter(d => d.estado === 'pendiente').length;
   const entregadas = datos.filter(d => d.estado === 'entregado').length;
 
-  $('total-reparaciones').textContent = total;
-  $('total-pendientes').textContent = pendientes;
-  $('total-entregadas').textContent = entregadas;
+  if ($('total-reparaciones')) $('total-reparaciones').textContent = total;
+  if ($('total-pendientes')) $('total-pendientes').textContent = pendientes;
+  if ($('total-entregadas')) $('total-entregadas').textContent = entregadas;
 
   const ctx = $('graficoReparaciones')?.getContext('2d');
   if (!ctx) return;
@@ -285,14 +322,14 @@ function actualizarMetricas() {
       datasets: [{
         data: [pendientes, entregadas, total - pendientes - entregadas],
         backgroundColor: ['#ffc107', '#28a745', '#6c757d'],
-        borderColor: ['#fff'], 
+        borderColor: ['#fff'],
         borderWidth: 2
       }]
     },
     options: {
       responsive: true,
-      plugins: { 
-        legend: { 
+      plugins: {
+        legend: {
           position: 'bottom',
           labels: {
             font: {
@@ -307,6 +344,8 @@ function actualizarMetricas() {
 
 // === BUSCADOR ===
 function buscarReparacion(valor) {
+  if (!$('tabla-reparaciones')) return;
+
   const datos = JSON.parse(localStorage.getItem('reparaciones')) || [];
   $('tabla-reparaciones').innerHTML = '';
   datos.forEach(d => {
@@ -317,7 +356,6 @@ function buscarReparacion(valor) {
     ) agregarFila(d, false);
   });
 }
-
 // === EXPORTACIÓN A EXCEL ===
 function exportarTablaCompletaExcel() {
   const tabla = document.querySelector('table');
@@ -340,6 +378,8 @@ function exportarFilaSeleccionadaExcel() {
   XLSX.utils.book_append_sheet(wb, ws, 'Reparación');
   XLSX.writeFile(wb, 'reparacion_individual.xlsx');
 }
+
+
 
 // === EXPORTACIÓN DE IMAGEN/FACTURA ===
 function exportarSeleccionadaComoImagen(tipo = null) {
@@ -429,18 +469,18 @@ function exportarSeleccionadaComoImagen(tipo = null) {
     <div class="linea"></div>
     <strong>Detalle:</strong><br />
     1 UND ${cel[4].textContent}<br />
-    Precio Unitario: $${parseFloat(cel[7].textContent.replace('$','')).toLocaleString('es-CO')}<br />
-    Valor Total: $${parseFloat(cel[7].textContent.replace('$','')).toLocaleString('es-CO')}<br />
+    Precio Unitario: $${parseFloat(cel[7].textContent.replace('$', '')).toLocaleString('es-CO')}<br />
+    Valor Total: $${parseFloat(cel[7].textContent.replace('$', '')).toLocaleString('es-CO')}<br />
 
     <div class="linea"></div>
-    <strong>Total a Pagar:</strong> $${parseFloat(cel[7].textContent.replace('$','')).toLocaleString('es-CO')}<br />
+    <strong>Total a Pagar:</strong> $${parseFloat(cel[7].textContent.replace('$', '')).toLocaleString('es-CO')}<br />
     Cambio: $0.00<br />
     Total Descuentos: $0.00<br />
 
     <div class="linea"></div>
     <strong>Discriminación Tarifas de IVA:</strong><br />
-    Base: $${parseFloat(cel[8].textContent.replace('$','')).toLocaleString('es-CO')}<br />
-    IVA: $${(parseFloat(cel[7].textContent.replace('$','')) - parseFloat(cel[8].textContent.replace('$',''))).toLocaleString('es-CO')}<br />
+    Base: $${parseFloat(cel[8].textContent.replace('$', '')).toLocaleString('es-CO')}<br />
+    IVA: $${(parseFloat(cel[7].textContent.replace('$', '')) - parseFloat(cel[8].textContent.replace('$', ''))).toLocaleString('es-CO')}<br />
 
     <div class="campo">Control ID: ${cel[9].textContent}</div>
     <div class="campo">Estado: ${cel[10].textContent}</div>
@@ -462,8 +502,6 @@ function exportarSeleccionadaComoImagen(tipo = null) {
 </body>
 </html>
   `;
-
-  
 
   const ventana = window.open('', '', 'width=380,height=700');
   ventana.document.open();
