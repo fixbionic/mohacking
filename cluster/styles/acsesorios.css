@@ -1,340 +1,486 @@
-/* =========================================================
-   Estilos Ultra Minimalistas - CSS3 Pure Elegance
-   Tema: Verde Neo-Minimalista
-   Versión: 6.0 Monocromatic Elegance
-   Características:
-   - Espacios generosos
-   - Tipografía limpia
-   - Bordes sutiles
-   - Transiciones suaves
-   - Contraste perfecto
-   ========================================================= */
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estilo Blanco con Efecto Liquid Glass</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #ff7700;
+            --primary-dark: #e56a00;
+            --primary-light: #fff0e0;
+            --accent-color: #00796b;
+            --bg-light: #ffffff;
+            --bg-dark: #f8f8f8;
+            --text-light: #212121;
+            --text-dark: #000000;
+            --card-bg: #ffffff;
+            --transition-speed: 0.3s;
+            --border-radius: 12px;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-shadow: rgba(0, 0, 0, 0.1);
+        }
 
-:root {
-  --primary-color: #00a651;
-  --primary-dark: #007a3d;
-  --primary-light: #e8f5e9;
-  --accent-color: #00796b;
-  --bg-light: #ffffff;
-  --bg-dark: #f5f5f5;
-  --text-light: #212121;
-  --text-dark: #424242;
-  --card-bg: #ffffff;
-  --transition-speed: 0.3s;
-  --border-radius: 8px;
-}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --primary-color: #00c853;
-    --primary-dark: #009624;
-    --primary-light: #1b1b1b;
-    --bg-light: #121212;
-    --bg-dark: #1e1e1e;
-    --text-light: #f5f5f5;
-    --text-dark: #e0e0e0;
-    --card-bg: #1e1e1e;
-  }
-}
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #f8f8f8 0%, #ffffff 100%);
+            color: var(--text-light);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            line-height: 1.6;
+            position: relative;
+            overflow-x: hidden;
+        }
 
-/* ======= BASE STYLES ======= */
-body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background-color: var(--bg-dark);
-  color: var(--text-light);
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  line-height: 1.6;
-}
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 15% 50%, rgba(255, 119, 0, 0.1) 0%, transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(255, 183, 77, 0.1) 0%, transparent 25%),
+                radial-gradient(circle at 50% 80%, rgba(255, 167, 38, 0.1) 0%, transparent 25%);
+            pointer-events: none;
+            z-index: -1;
+        }
 
-/* ======= TYPOGRAPHY ======= */
-h2, h3 {
-  margin-bottom: 1.5rem;
-  color: var(--primary-dark);
-  font-weight: 600;
-  letter-spacing: -0.25px;
-  position: relative;
-}
+        /* ======= TYPOGRAPHY ======= */
+        h2, h3 {
+            margin-bottom: 1.5rem;
+            color: var(--text-light);
+            font-weight: 600;
+            letter-spacing: -0.25px;
+            position: relative;
+        }
 
-h2::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 0;
-  width: 40px;
-  height: 2px;
-  background: var(--primary-color);
-}
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
 
-/* ======= SIDEBAR MINIMAL ======= */
-.sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 260px;
-  height: 100vh;
-  background-color: var(--card-bg);
-  border-right: 1px solid rgba(0, 0, 0, 0.08);
-  padding: 2rem 1.5rem;
-  z-index: 1000;
-  transition: transform var(--transition-speed) ease;
-}
+        /* ======= SIDEBAR CON EFECTO GLASS ======= */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 260px;
+            height: 100vh;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid var(--glass-border);
+            padding: 2rem 1.5rem;
+            z-index: 1000;
+            transition: transform var(--transition-speed) ease;
+            box-shadow: 0 8px 32px var(--glass-shadow);
+        }
 
-.sidebar-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 2.5rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-}
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
 
-.sidebar-brand {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--primary-dark);
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-}
+        .sidebar-brand {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-light);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
 
-.sidebar-brand i {
-  margin-right: 10px;
-  color: var(--primary-color);
-}
+        .sidebar-brand i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
 
-.sidebar .nav-link {
-  color: var(--text-light);
-  text-decoration: none;
-  margin-bottom: 0.5rem;
-  display: flex;
-  align-items: center;
-  padding: 12px 16px;
-  border-radius: var(--border-radius);
-  transition: all var(--transition-speed) ease;
-}
+        .sidebar .nav-link {
+            color: var(--text-light);
+            text-decoration: none;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-radius: var(--border-radius);
+            transition: all var(--transition-speed) ease;
+        }
 
-.sidebar .nav-link i {
-  margin-right: 12px;
-  color: var(--primary-color);
-}
+        .sidebar .nav-link i {
+            margin-right: 12px;
+            color: var(--primary-color);
+        }
 
-.sidebar .nav-link:hover {
-  background-color: var(--primary-light);
-  color: var(--primary-dark);
-}
+        .sidebar .nav-link:hover {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+        }
 
-.sidebar .nav-link.active {
-  background-color: var(--primary-light);
-  color: var(--primary-dark);
-  font-weight: 500;
-}
+        .sidebar .nav-link.active {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            font-weight: 500;
+        }
 
-/* ======= MAIN CONTENT ======= */
-.main-content {
-  margin-left: 260px;
-  padding: 2.5rem;
-  min-height: 100vh;
-  transition: margin-left var(--transition-speed) ease;
-}
+        /* ======= MAIN CONTENT ======= */
+        .main-content {
+            margin-left: 260px;
+            padding: 2.5rem;
+            min-height: 100vh;
+            transition: margin-left var(--transition-speed) ease;
+        }
 
-.content-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2.5rem;
-}
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+        }
 
-.toggle-sidebar {
-  background: transparent;
-  color: var(--primary-color);
-  border: 1px solid var(--primary-color);
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all var(--transition-speed) ease;
-}
+        .toggle-sidebar {
+            background: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+        }
 
-.toggle-sidebar:hover {
-  background-color: var(--primary-light);
-}
+        .toggle-sidebar:hover {
+            background-color: var(--primary-light);
+        }
 
-/* ======= CARDS ======= */
-.card {
-  background: var(--card-bg);
-  border-radius: var(--border-radius);
-  padding: 1.8rem;
-  margin-bottom: 2rem;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  transition: transform var(--transition-speed) ease;
-}
+        /* ======= CARDS CON EFECTO GLASS ======= */
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            padding: 1.8rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--glass-border);
+            transition: transform var(--transition-speed) ease;
+            box-shadow: 0 8px 32px var(--glass-shadow);
+        }
 
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.15);
+        }
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-}
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
 
-.card-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--primary-dark);
-  margin: 0;
-}
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin: 0;
+        }
 
-/* ======= FORMS ======= */
-.form-group {
-  margin-bottom: 1.5rem;
-}
+        /* ======= BOTONES NARANJA ======= */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+            border: 1px solid transparent;
+            background-color: var(--primary-color);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
 
-.form-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: var(--text-light);
-}
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: var(--transition-speed);
+        }
 
-.form-control {
-  width: 100%;
-  padding: 12px 16px;
-  font-size: 1rem;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: var(--border-radius);
-  background: var(--card-bg);
-  transition: all var(--transition-speed) ease;
-}
+        .btn:hover::before {
+            left: 100%;
+        }
 
-.form-control:focus {
-  border-color: var(--primary-color);
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(0, 166, 81, 0.1);
-}
+        .btn:hover {
+            background-color: var(--primary-dark);
+            box-shadow: 0 6px 20px rgba(255, 119, 0, 0.3);
+        }
 
-/* ======= BUTTONS ======= */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px 24px;
-  font-size: 1rem;
-  font-weight: 500;
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  transition: all var(--transition-speed) ease;
-  border: 1px solid transparent;
-  background-color: var(--primary-color);
-  color: white;
-}
+        .btn-outline {
+            background-color: transparent;
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
 
-.btn:hover {
-  background-color: var(--primary-dark);
-}
+        .btn-outline:hover {
+            background-color: var(--primary-light);
+        }
 
-.btn-outline {
-  background-color: transparent;
-  border-color: var(--primary-color);
-  color: var(--primary-color);
-}
+        /* ======= MAPA DE CALOR ======= */
+        .heatmap-container {
+            margin-top: 2rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px var(--glass-shadow);
+        }
 
-.btn-outline:hover {
-  background-color: var(--primary-light);
-}
+        .heatmap {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            margin-top: 1rem;
+        }
 
-/* ======= TABLES ======= */
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  background: var(--card-bg);
-  border-radius: var(--border-radius);
-  overflow: hidden;
-}
+        .heatmap-cell {
+            height: 30px;
+            border-radius: 4px;
+            background-color: #f0f0f0;
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+        }
 
-.table th {
-  background-color: var(--primary-light);
-  color: var(--primary-dark);
-  font-weight: 600;
-  padding: 16px;
-  text-align: left;
-}
+        .heatmap-cell:hover::after {
+            content: attr(data-value);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 4px 8px;
+            background: var(--text-light);
+            color: white;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 100;
+        }
 
-.table td {
-  padding: 14px 16px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-}
+        .heatmap-intensity-0 { background-color: #f0f0f0; }
+        .heatmap-intensity-1 { background-color: #ffccbc; }
+        .heatmap-intensity-2 { background-color: #ffab91; }
+        .heatmap-intensity-3 { background-color: #ff8a65; }
+        .heatmap-intensity-4 { background-color: #ff5722; }
+        .heatmap-intensity-5 { background-color: #e64a19; }
 
-.table tr:last-child td {
-  border-bottom: none;
-}
+        .heatmap-legend {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            margin-top: 1rem;
+            font-size: 0.8rem;
+        }
 
-.table tr:hover td {
-  background-color: var(--primary-light);
-}
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-left: 1rem;
+        }
 
-/* ======= STATUS BADGES ======= */
-.badge {
-  display: inline-block;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 500;
-}
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+            margin-right: 0.5rem;
+        }
 
-.badge-delivered {
-  background-color: #e8f5e9;
-  color: #00a651;
-}
+        /* ======= RESPONSIVE ======= */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar-visible {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+        }
 
-.badge-pending {
-  background-color: #fff8e1;
-  color: #ff8f00;
-}
+        @media (max-width: 768px) {
+            .card {
+                padding: 1.5rem;
+            }
+            
+            .content-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .heatmap {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
 
-.badge-cancelled {
-  background-color: #ffebee;
-  color: #c62828;
-}
+        /* ======= UTILITY CLASSES ======= */
+        .mb-3 { margin-bottom: 1.5rem; }
+        .p-3 { padding: 1.5rem; }
+        .text-primary { color: var(--primary-color); }
+        .bg-light { background-color: var(--primary-light); }
+        .glass-effect {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px var(--glass-shadow);
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="sidebar-brand">
+                <i class="fas fa-leaf"></i> BrandName
+            </a>
+        </div>
+        <div class="sidebar-nav">
+            <a href="#" class="nav-link active">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a href="#" class="nav-link">
+                <i class="fas fa-chart-bar"></i> Analytics
+            </a>
+            <a href="#" class="nav-link">
+                <i class="fas fa-shopping-cart"></i> Orders
+            </a>
+            <a href="#" class="nav-link">
+                <i class="fas fa-users"></i> Customers
+            </a>
+            <a href="#" class="nav-link">
+                <i class="fas fa-cog"></i> Settings
+            </a>
+        </div>
+    </div>
 
-/* ======= RESPONSIVE ======= */
-@media (max-width: 992px) {
-  .sidebar {
-    transform: translateX(-100%);
-  }
-  
-  .sidebar-visible {
-    transform: translateX(0);
-  }
-  
-  .main-content {
-    margin-left: 0;
-  }
-}
+    <div class="main-content">
+        <div class="content-header">
+            <h1>Dashboard Overview</h1>
+            <button class="toggle-sidebar">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
 
-@media (max-width: 768px) {
-  .card {
-    padding: 1.5rem;
-  }
-  
-  .content-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-}
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Performance Metrics</h2>
+                <button class="btn">
+                    <i class="fas fa-download"></i> Export Report
+                </button>
+            </div>
+            <div class="card-body">
+                <p>Here you can see the main performance indicators of your business. All metrics are updated in real time.</p>
+                <div class="form-group">
+                    <label class="form-label">Filter by date:</label>
+                    <input type="date" class="form-control">
+                </div>
+                <button class="btn mb-3">Apply Filters</button>
+                <button class="btn btn-outline">Reset</button>
+            </div>
+        </div>
 
-/* ======= UTILITY CLASSES ======= */
-.mb-3 { margin-bottom: 1.5rem; }
-.p-3 { padding: 1.5rem; }
-.text-primary { color: var(--primary-color); }
-.bg-light { background-color: var(--primary-light); }
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">User Activity Heatmap</h2>
+            </div>
+            <div class="card-body">
+                <p>This heatmap shows the areas of the website that receive the most attention from users. Hover over each cell to see exact values.</p>
+                
+                <div class="heatmap-container">
+                    <h3>Page Attention Heatmap</h3>
+                    <p>Last 7 days of user interaction</p>
+                    
+                    <div class="heatmap">
+                        <!-- Heatmap cells will be generated by JavaScript -->
+                    </div>
+                    
+                    <div class="heatmap-legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #f0f0f0;"></div>
+                            <span>Low</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #ffccbc;"></div>
+                            <span>Medium</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #ff5722;"></div>
+                            <span>High</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle sidebar on mobile
+        document.querySelector('.toggle-sidebar').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('sidebar-visible');
+        });
+
+        // Generate heatmap data
+        function generateHeatmap() {
+            const heatmap = document.querySelector('.heatmap');
+            heatmap.innerHTML = '';
+            
+            // Generate 35 cells for a 7x5 grid
+            for (let i = 0; i < 35; i++) {
+                const intensity = Math.floor(Math.random() * 6); // 0-5
+                const value = Math.floor(Math.random() * 1000); // Random value
+                
+                const cell = document.createElement('div');
+                cell.className = `heatmap-cell heatmap-intensity-${intensity}`;
+                cell.setAttribute('data-value', `${value} visits`);
+                
+                heatmap.appendChild(cell);
+            }
+        }
+
+        // Initialize heatmap
+        generateHeatmap();
+    </script>
+</body>
+</html>

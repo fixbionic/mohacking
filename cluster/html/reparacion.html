@@ -10,78 +10,395 @@
   
   <!-- Font Awesome para iconos -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-
-  <!-- Estilos personalizados -->
-  <link rel="stylesheet" href="../styles/reparacion.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
 
   <!-- Librerías externas -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <style>
+    :root {
+      --primary-color: #ffffff;
+      --secondary-color: #FF7F00;
+      --secondary-light: #FFA34D;
+      --secondary-dark: #CC6600;
+      --text-color: #333333;
+      --text-light: #666666;
+      --glass-bg: rgba(255, 255, 255, 0.7);
+      --glass-border: rgba(255, 255, 255, 0.8);
+      --glass-shadow: rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+      background-color: var(--primary-color);
+      color: var(--text-color);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      background-image: 
+        radial-gradient(circle at 15% 50%, rgba(255, 165, 0, 0.05) 0%, transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(255, 165, 0, 0.05) 0%, transparent 25%);
+    }
+
+    /* Efecto de vidrio líquido (glassmorphism) */
+    .glass-effect {
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 8px 32px var(--glass-shadow);
+      border-radius: 12px;
+    }
+
+    /* Sidebar con efecto de vidrio */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 100vh;
+      width: 250px;
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-right: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 4px 0 16px rgba(0, 0, 0, 0.05);
+      z-index: 1000;
+      overflow-y: auto;
+    }
+
+    .sidebar h4 {
+      color: var(--secondary-color);
+      font-weight: 700;
+      text-align: center;
+      padding: 1rem 0;
+      border-bottom: 2px solid var(--secondary-light);
+      margin-bottom: 1.5rem;
+    }
+
+    .nav-link {
+      color: var(--text-color);
+      padding: 0.75rem 1rem;
+      margin: 0.25rem 0;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      background-color: var(--secondary-light);
+      color: white;
+    }
+
+    /* Contenido principal */
+    .main-content {
+      margin-left: 250px;
+      padding: 2rem;
+    }
+
+    @media (max-width: 992px) {
+      .sidebar {
+        width: 80px;
+        padding: 1rem 0.5rem;
+      }
+      .sidebar h4 {
+        font-size: 1rem;
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+        margin: 0 auto;
+      }
+      .nav-link span {
+        display: none;
+      }
+      .main-content {
+        margin-left: 80px;
+      }
+    }
+
+    /* Títulos */
+    h2 {
+      color: var(--secondary-color);
+      font-weight: 700;
+      position: relative;
+      padding-bottom: 0.5rem;
+    }
+
+    h2:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 60px;
+      height: 4px;
+      background: var(--secondary-color);
+      border-radius: 2px;
+    }
+
+    /* Formularios */
+    .form-label {
+      font-weight: 600;
+      color: var(--text-light);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-control, .form-select {
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      border: 1px solid #ddd;
+      transition: all 0.3s;
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: var(--secondary-color);
+      box-shadow: 0 0 0 0.2rem rgba(255, 127, 0, 0.25);
+    }
+
+    /* Botones */
+    .btn {
+      border-radius: 8px;
+      padding: 0.5rem 1.5rem;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background-color: var(--secondary-color);
+      border-color: var(--secondary-color);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--secondary-dark);
+      border-color: var(--secondary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-warning {
+      background-color: #ffc107;
+      border-color: #ffc107;
+    }
+
+    .btn-danger {
+      background-color: #dc3545;
+      border-color: #dc3545;
+    }
+
+    .btn-outline-success {
+      color: var(--secondary-color);
+      border-color: var(--secondary-color);
+    }
+
+    .btn-outline-success:hover {
+      background-color: var(--secondary-color);
+      color: white;
+    }
+
+    .btn-group .btn {
+      border-radius: 6px;
+      margin: 0 0.25rem 0.25rem 0;
+    }
+
+    /* Tablas */
+    .table {
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .table thead th {
+      background-color: var(--secondary-color);
+      color: white;
+      border: none;
+      padding: 1rem;
+      font-weight: 600;
+    }
+
+    .table tbody td {
+      padding: 1rem;
+      vertical-align: middle;
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+      background-color: rgba(255, 163, 77, 0.1);
+    }
+
+    .table-hover tbody tr:hover {
+      background-color: rgba(255, 163, 77, 0.2);
+    }
+
+    /* Tarjetas con efecto de vidrio */
+    .card {
+      border: none;
+      border-radius: 12px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px var(--glass-shadow);
+      transition: transform 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card-header {
+      background-color: var(--secondary-color);
+      color: white;
+      border: none;
+      font-weight: 600;
+    }
+
+    /* Modal */
+    .modal-content {
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+    }
+
+    .modal-header {
+      background-color: var(--secondary-color);
+      color: white;
+    }
+
+    /* Animaciones suaves */
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Mejoras visuales para elementos específicos */
+    #graficoReparaciones {
+      border-radius: 12px;
+      background: white;
+      padding: 1rem;
+    }
+
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+
+    .stat-card {
+      background: rgba(255, 163, 77, 0.1);
+      border-radius: 8px;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .stat-icon {
+      font-size: 1.5rem;
+      color: var(--secondary-color);
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--secondary-color);
+    }
+
+    .stat-label {
+      display: block;
+      font-size: 0.875rem;
+      color: var(--text-light);
+    }
+
+    /* Patrón gráfico */
+    .patron-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      max-width: 200px;
+    }
+
+    .patron-btn {
+      aspect-ratio: 1;
+      border: 2px solid var(--secondary-color);
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .patron-btn:hover, .patron-btn.selected {
+      background-color: var(--secondary-color);
+      color: white;
+    }
+  </style>
 </head>
 
-<body class="bg-body-tertiary text-dark">
-<!-- Sidebar -->
-<div class="sidebar">
-  <h4><i class="fas fa-mobile-alt me-2"></i> Fixbionic</h4>
+<body class="fade-in">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h4><i class="fas fa-mobile-alt me-2"></i> Fixbionic</h4>
 
-  <div class="sidebar-nav">
-    <a class="nav-link" href="../../index.html">
-      <i class="fas fa-home"></i> Inicio
-    </a>
-    <a class="nav-link" href="accesorios.html">
-      <i class="fas fa-keyboard"></i> Accesorios
-    </a>
-    <a class="nav-link" href="estadisticas.html">
-      <i class="fas fa-chart-bar"></i> Estadísticas
-    </a>
-    <a class="nav-link active" href="reparacion.html">
-      <i class="fas fa-tools"></i> Reparaciones
-    </a>
+    <div class="sidebar-nav">
+      <a class="nav-link" href="../../index.html">
+        <i class="fas fa-home me-2"></i><span>Inicio</span>
+      </a>
+      <a class="nav-link" href="estadisticas.html">
+        <i class="fas fa-keyboard me-2"></i><span>Accesorios</span>
+      </a>
+      <a class="nav-link" href="estadisticas.html">
+        <i class="fas fa-chart-bar me-2"></i><span>Estadísticas</span>
+      </a>
+      <a class="nav-link active" href="reparacion.html">
+        <i class="fas fa-tools me-2"></i><span>Reparaciones</span>
+      </a>
 
-    <!-- Botón para abrir el modal -->
-    <button type="button" class="btn btn-info mt-3" data-bs-toggle="modal" data-bs-target="#modal-info">
-      <i class="fas fa-info-circle me-2"></i> Ver funciones del sistema
-    </button>
+      <!-- Botón para abrir el modal -->
+      <button type="button" class="btn btn-primary mt-3 w-100" data-bs-toggle="modal" data-bs-target="#modal-info">
+        <i class="fas fa-info-circle me-2"></i> <span>Ver funciones del sistema</span>
+      </button>
+    </div>
   </div>
-</div>
 
-<!-- Modal de información -->
-<div class="modal fade" id="modal-info" tabindex="-1" aria-labelledby="modalInfoLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      
-      <!-- Header -->
-      <div class="modal-header bg-info text-white">
-        <h5 class="modal-title" id="modalInfoLabel">
-          <i class="fas fa-keyboard me-2"></i> Funciones del sistema
-        </h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      
-      <!-- Body -->
-      <div class="modal-body">
-        <p>Para activar funciones rápidamente puedes usar las siguientes combinaciones de teclas:</p>
-        <ul class="list-group">
-          <li class="list-group-item"><strong>ESPACIO + 1:</strong> Agregar</li>
-          <li class="list-group-item"><strong>ESPACIO + 2:</strong> Editar</li>
-          <li class="list-group-item"><strong>ESPACIO + 3:</strong> Eliminar</li>
-          <li class="list-group-item"><strong>ESPACIO + 4:</strong> Exportar a Excel</li>
-          <li class="list-group-item"><strong>ESPACIO + 5:</strong> Exportar a JSON</li>
-          <li class="list-group-item"><strong>ESPACIO + 6:</strong> Descargar imagen</li>
-          <li class="list-group-item"><strong>ESPACIO + 7:</strong> Imprimir</li>
-        </ul>
-        <hr>
-        <p><strong>Nota:</strong> Siempre debes presionar primero la tecla <kbd>ESPACIO</kbd> y luego el número deseado.</p>
-      </div>
-      
-      <!-- Footer -->
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+  <!-- Modal de información -->
+  <div class="modal fade" id="modal-info" tabindex="-1" aria-labelledby="modalInfoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        
+        <!-- Header -->
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalInfoLabel">
+            <i class="fas fa-keyboard me-2"></i> Funciones del sistema
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        
+        <!-- Body -->
+        <div class="modal-body">
+          <p>Para activar funciones rápidamente puedes usar las siguientes combinaciones de teclas:</p>
+          <ul class="list-group">
+            <li class="list-group-item"><strong>ESPACIO + 1:</strong> Agregar</li>
+            <li class="list-group-item"><strong>ESPACIO + 2:</strong> Editar</li>
+            <li class="list-group-item"><strong>ESPACIO + 3:</strong> Eliminar</li>
+            <li class="list-group-item"><strong>ESPACIO + 4:</strong> Exportar a Excel</li>
+            <li class="list-group-item"><strong>ESPACIO + 5:</strong> Exportar a JSON</li>
+            <li class="list-group-item"><strong>ESPACIO + 6:</strong> Descargar imagen</li>
+            <li class="list-group-item"><strong>ESPACIO + 7:</strong> Imprimir</li>
+          </ul>
+          <hr>
+          <p><strong>Nota:</strong> Siempre debes presionar primero la tecla <kbd>ESPACIO</kbd> y luego el número deseado.</p>
+        </div>
+        
+        <!-- Footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
   <!-- Botón para móviles -->
   <button class="sidebar-toggle d-lg-none btn btn-primary">
@@ -95,7 +412,7 @@
     <div class="row g-4">
       <!-- Formulario -->
       <div class="col-lg-8">
-        <form id="formulario" autocomplete="off" class="bg-white p-4 rounded-3 shadow-sm">
+        <form id="formulario" autocomplete="off" class="glass-effect p-4">
           <div class="row g-3">
             <!-- Campos del formulario -->
             <div class="col-md-6">
@@ -118,48 +435,30 @@
               <input type="text" id="modelo" class="form-control" placeholder="Modelo del dispositivo" required>
             </div>
             
-<div class="col-md-6">
-  <label for="reparacion" class="form-label">Tipo de reparación</label>
-  <select id="reparacion" class="form-select" required>
-    <option value="" selected disabled>Seleccione el tipo de reparación</option>
-    <option value="pantalla">Cambio de pantalla</option>
-    <option value="bateria">Reemplazo de batería</option>
-    <option value="conector">Reparación de conector de carga</option>
-    <option value="camara">Reparación de cámara</option>
-    <option value="software">Problemas de software</option>
-    <option value="audio">Problemas de audio/altavoz</option>
-    <option value="microfono">Reparación de micrófono</option>
-    <option value="botones">Reparación de botones</option>
-    <option value="agua">Daño por agua</option>
-    <option value="general">Reparación general/revisión</option>
-    <option value="otros">Otro</option>
-  </select>
-  
-  <!-- Campo de texto que aparece solo cuando se selecciona "Otros" -->
-  <div id="otraReparacionContainer" class="mt-2" style="display: none;">
-    <label for="otraReparacion" class="form-label">Especifique el tipo de reparación</label>
-    <input type="text" id="otraReparacion" class="form-control" placeholder="Describa el tipo de reparación">
-  </div>
-</div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const selectReparacion = document.getElementById('reparacion');
-  const otraReparacionContainer = document.getElementById('otraReparacionContainer');
-  const inputOtraReparacion = document.getElementById('otraReparacion');
-  
-  selectReparacion.addEventListener('change', function() {
-    if (this.value === 'otros') {
-      otraReparacionContainer.style.display = 'block';
-      inputOtraReparacion.setAttribute('required', 'required');
-    } else {
-      otraReparacionContainer.style.display = 'none';
-      inputOtraReparacion.removeAttribute('required');
-      inputOtraReparacion.value = '';
-    }
-  });
-});
-</script>
+            <div class="col-md-6">
+              <label for="reparacion" class="form-label">Tipo de reparación</label>
+              <select id="reparacion" class="form-select" required>
+                <option value="" selected disabled>Seleccione el tipo de reparación</option>
+                <option value="pantalla">Cambio de pantalla</option>
+                <option value="bateria">Reemplazo de batería</option>
+                <option value="conector">Reparación de conector de carga</option>
+                <option value="camara">Reparación de cámara</option>
+                <option value="software">Problemas de software</option>
+                <option value="audio">Problemas de audio/altavoz</option>
+                <option value="microfono">Reparación de micrófono</option>
+                <option value="botones">Reparación de botones</option>
+                <option value="agua">Daño por agua</option>
+                <option value="general">Reparación general/revisión</option>
+                <option value="otros">Otro</option>
+              </select>
+              
+              <!-- Campo de texto que aparece solo cuando se selecciona "Otros" -->
+              <div id="otraReparacionContainer" class="mt-2" style="display: none;">
+                <label for="otraReparacion" class="form-label">Especifique el tipo de reparación</label>
+                <input type="text" id="otraReparacion" class="form-control" placeholder="Describa el tipo de reparación">
+              </div>
+            </div>
+            
             <div class="col-md-6">
               <label for="tecnico" class="form-label">Técnico</label>
               <select id="tecnico" class="form-select" required>
@@ -234,29 +533,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
           <!-- Botones principales -->
           <div class="btn-group-wrap mt-4">
-            <button type="submit" class="btn btn-action btn-primary">
+            <button type="submit" class="btn btn-primary">
               <i class="fas fa-plus me-2"></i>Agregar
             </button>
-            <button type="button" id="btn-editar" class="btn btn-action btn-warning">
+            <button type="button" id="btn-editar" class="btn btn-warning">
               <i class="fas fa-edit me-2"></i>Editar
             </button>
-            <button type="button" id="btn-eliminar" class="btn btn-action btn-danger">
+            <button type="button" id="btn-eliminar" class="btn btn-danger">
               <i class="fas fa-trash me-2"></i>Eliminar
             </button>
           </div>
           
           <!-- Botones secundarios -->
           <div class="btn-group-wrap mt-3">
-            <button type="button" id="btn-export-excel" class="btn btn-action btn-success">
+            <button type="button" id="btn-export-excel" class="btn btn-success">
               <i class="fas fa-file-excel me-2"></i>Excel
             </button>
-            <button type="button" class="btn btn-action btn-secondary" data-bs-toggle="modal" data-bs-target="#modal-exportar-json">
+            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modal-exportar-json">
               <i class="fas fa-file-code me-2"></i>JSON
             </button>
-            <button type="button" id="btn-descargar-imagen" class="btn btn-action btn-dark">
+            <button type="button" id="btn-descargar-imagen" class="btn btn-dark">
               <i class="fas fa-image me-2"></i>Imagen
             </button>
-            <button type="button" id="btn-imprimir" class="btn btn-action btn-info">
+            <button type="button" id="btn-imprimir" class="btn btn-info">
               <i class="fas fa-print me-2"></i>Imprimir
             </button>
           </div>
@@ -271,7 +570,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
             <div class="col-md-4">
               <input type="file" id="importarBD" class="form-control d-none">
-              <label for="importarBD" class="btn btn-action btn-outline-primary w-100">
+              <label for="importarBD" class="btn btn-outline-primary w-100">
                 <i class="fas fa-file-import me-2"></i>Importar
               </label>
             </div>
@@ -279,51 +578,53 @@ document.addEventListener('DOMContentLoaded', function() {
         </form>
 
         <!-- Tabla de reparaciones -->
-        <div class="table-responsive bg-white p-3 rounded-3 shadow-sm mt-4">
-          <table class="table table-hover table-bordered align-middle">
-            <thead class="table-primary">
-              <tr>
-                <th><i class="fas fa-calendar me-1"></i>Fecha</th>
-                                <th><i class="fas fa-calendar me-1"></i>Hora</th>
-                <th><i class="fas fa-user me-1"></i>Cliente</th>
-                <th><i class="fas fa-phone me-1"></i>Teléfono</th>
-                <th><i class="fas fa-mobile me-1"></i>Modelo</th>
-                <th><i class="fas fa-tools me-1"></i>Reparación</th>
-                <th><i class="fas fa-user-cog me-1"></i>Técnico</th>
-                <th><i class="fas fa-sticky-note me-1"></i>Notas</th>
-                <th><i class="fas fa-dollar-sign me-1"></i>Precio</th>
-                <th><i class="fas fa-key me-1"></i>Contraseña</th>
-                <th><i class="fas fa-cog me-1"></i>Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="tabla-reparaciones"></tbody>
-          </table>
+        <div class="glass-effect p-3 mt-4">
+          <div class="table-responsive">
+            <table class="table table-hover table-bordered align-middle">
+              <thead>
+                <tr>
+                  <th><i class="fas fa-calendar me-1"></i>Fecha</th>
+                  <th><i class="fas fa-clock me-1"></i>Hora</th>
+                  <th><i class="fas fa-user me-1"></i>Cliente</th>
+                  <th><i class="fas fa-phone me-1"></i>Teléfono</th>
+                  <th><i class="fas fa-mobile me-1"></i>Modelo</th>
+                  <th><i class="fas fa-tools me-1"></i>Reparación</th>
+                  <th><i class="fas fa-user-cog me-1"></i>Técnico</th>
+                  <th><i class="fas fa-sticky-note me-1"></i>Notas</th>
+                  <th><i class="fas fa-dollar-sign me-1"></i>Precio</th>
+                  <th><i class="fas fa-key me-1"></i>Contraseña</th>
+                  <th><i class="fas fa-cog me-1"></i>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-reparaciones"></tbody>
+            </table>
+          </div>
         </div>
       </div>
 
       <!-- Panel derecho -->
       <div class="col-lg-4">
-        <div class="bg-white p-4 rounded-3 shadow-sm h-100">
-          <h5 class="fw-bold text-primary mb-4"><i class="fas fa-chart-pie me-2"></i>Resumen de Reparaciones</h5>
+        <div class="glass-effect p-4 h-100">
+          <h5 class="fw-bold mb-4" style="color: var(--secondary-color);"><i class="fas fa-chart-pie me-2"></i>Resumen de Reparaciones</h5>
           <div class="chart-container">
             <canvas id="graficoReparaciones"></canvas>
           </div>
           <div class="stats-container mt-4">
-            <div class="stat-card bg-primary-light">
+            <div class="stat-card">
               <i class="fas fa-tasks stat-icon"></i>
               <div>
                 <span class="stat-label">Total</span>
                 <span class="stat-value" id="total-reparaciones">0</span>
               </div>
             </div>
-            <div class="stat-card bg-warning-light">
+            <div class="stat-card">
               <i class="fas fa-clock stat-icon"></i>
               <div>
                 <span class="stat-label">Pendientes</span>
                 <span class="stat-value" id="total-pendientes">0</span>
               </div>
             </div>
-            <div class="stat-card bg-success-light">
+            <div class="stat-card">
               <i class="fas fa-check-circle stat-icon"></i>
               <div>
                 <span class="stat-label">Entregadas</span>
@@ -340,13 +641,13 @@ document.addEventListener('DOMContentLoaded', function() {
   <!-- Modal Exportar JSON -->
   <div class="modal fade" id="modal-exportar-json" tabindex="-1" aria-labelledby="modalExportarJsonLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content border-0 shadow">
-        <div class="modal-header bg-primary text-white">
+      <div class="modal-content">
+        <div class="modal-header">
           <h5 class="modal-title" id="modalExportarJsonLabel"><i class="fas fa-file-export me-2"></i>Exportar Base de Datos</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
         </div>
         <div class="modal-body text-center py-4">
-          <i class="fas fa-database fa-3x text-primary mb-3"></i>
+          <i class="fas fa-database fa-3x mb-3" style="color: var(--secondary-color);"></i>
           <p>¿Qué deseas hacer con la base de datos actual?</p>
         </div>
         <div class="modal-footer justify-content-center border-0">
@@ -363,55 +664,10 @@ document.addEventListener('DOMContentLoaded', function() {
       </div>
     </div>
   </div>
-<script>
-  (function () {
-    let esperandoNumero = false;
-
-    document.addEventListener("keydown", function (event) {
-      // Si presiona la tecla ESPACIO
-      if (event.code === "Space") {
-        event.preventDefault(); // Evita el scroll
-        esperandoNumero = true;
-        console.log("Presiona un número del 1 al 7...");
-        return;
-      }
-
-      // Si está esperando un número
-      if (esperandoNumero) {
-        esperandoNumero = false;
-
-        switch (event.key) {
-          case "1":
-            document.querySelector("button[type='submit']").click();
-            break;
-          case "2":
-            document.getElementById("btn-editar").click();
-            break;
-          case "3":
-            document.getElementById("btn-eliminar").click();
-            break;
-          case "4":
-            document.getElementById("btn-export-excel").click();
-            break;
-          case "5":
-            document.querySelector("button[data-bs-target='#modal-exportar-json']").click();
-            break;
-          case "6":
-            document.getElementById("btn-descargar-imagen").click();
-            break;
-          case "7":
-            document.getElementById("btn-imprimir").click();
-            break;
-          default:
-            console.log("Número no válido.");
-        }
-      }
-    });
-  })();
-</script>
 
   <!-- Scripts -->
-  <script src="../json/reparacion.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../json/reparacion.js"></script>
+
 </body>
 </html>

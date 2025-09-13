@@ -1,3 +1,4 @@
+
 // === ESTADO GLOBAL ===
 const state = {
   patronActual: [],
@@ -19,15 +20,18 @@ window.onload = () => {
   actualizarMetricas();
   manejarPatron();
   mostrarCampoContrasena();
-  
-  $('tipo-contrasena').addEventListener('change', mostrarCampoContrasena);
-  $('btn-editar').addEventListener('click', editarSeleccionada);
-  $('btn-eliminar').addEventListener('click', eliminarSeleccionada);
-  $('buscarInput').addEventListener('input', e => buscarReparacion(e.target.value));
-  $('btn-descargar-imagen').addEventListener('click', () => exportarSeleccionadaComoImagen());
-  $('btn-imprimir').addEventListener('click', () => exportarSeleccionadaComoImagen('pos'));
 
-  // Verificar que los elementos existen antes de agregar event listeners
+  // Configurar event listeners
+  configurarEventListeners();
+  
+  // Generar ID automático al cargar
+  if ($('controlID')) {
+    $('controlID').value = generarID();
+  }
+};
+
+function configurarEventListeners() {
+  // Event listeners existentes
   if ($('tipo-contrasena')) {
     $('tipo-contrasena').addEventListener('change', mostrarCampoContrasena);
   }
@@ -44,107 +48,125 @@ window.onload = () => {
     $('buscarInput').addEventListener('input', e => buscarReparacion(e.target.value));
   }
 
+  if ($('btn-descargar-imagen')) {
+    $('btn-descargar-imagen').addEventListener('click', () => exportarSeleccionadaComoImagen());
+  }
+
+  if ($('btn-imprimir')) {
+    $('btn-imprimir').addEventListener('click', () => exportarSeleccionadaComoImagen('print'));
+  }
+
   if ($('formulario')) {
-    $('formulario').addEventListener('submit', e => {
-      e.preventDefault();
-      const tipo = $('tipo-contrasena') ? $('tipo-contrasena').value : 'pin';
-      const patron = $('patron-input') ? $('patron-input').value : '';
-      const pin = $('contrasena') ? $('contrasena').value : '';
-
-      if (tipo === 'patron' && !patron.trim()) {
-        if ($('errorPatron')) $('errorPatron').style.display = 'block';
-        return;
-      }
-
-      const nuevaReparacion = {
-        fecha: $('fecha') ? $('fecha').value : '',
-        hora: new Date().toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' }),
-        cliente: $('cliente') ? $('cliente').value : '',
-        telefono: $('telefono') ? $('telefono').value : '',
-        modelo: $('modelo') ? $('modelo').value : '',
-        reparacion: $('reparacion') ? $('reparacion').value : '',
-        tecnico: $('tecnico') ? $('tecnico').value : '',
-        notas: $('notas') ? $('notas').value : '',
-        precio: $('precio') ? $('precio').value : '0',
-        iva: calcularIVA($('precio') ? $('precio').value : '0'),
-        controlID: generarID(),
-        estado: $('estado') ? $('estado').value : 'pendiente',
-        contrasena: tipo === 'pin' ? pin : patron
-      };
-
-      agregarFila(nuevaReparacion, true);
-      if ($('formulario')) $('formulario').reset();
-      mostrarCampoContrasena();
-      actualizarMetricas();
-    });
+    $('formulario').addEventListener('submit', manejarEnvioFormulario);
   }
 
   if ($('btn-guardar-json')) {
-    $('btn-guardar-json').addEventListener('click', () => {
-      const datos = JSON.parse(localStorage.getItem('reparaciones')) || [];
-      const blob = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `reparaciones_${new Date().toLocaleDateString('es-CO')}.json`;
-      a.click();
-    });
+    $('btn-guardar-json').addEventListener('click', guardarJSON);
   }
 
   if ($('btn-agregar-backup')) {
-    $('btn-agregar-backup').addEventListener('click', () => {
-      const datos = JSON.parse(localStorage.getItem('reparaciones')) || [];
-      const copias = JSON.parse(localStorage.getItem('copiasSeguridad') || '[]');
-
-      const nuevaCopia = {
-        fecha: new Date().toLocaleString('es-CO'),
-        tipo: 'reparaciones',
-        datos: datos
-      };
-
-      copias.push(nuevaCopia);
-      localStorage.setItem('copiasSeguridad', JSON.stringify(copias));
-      alert('✅ Copia de seguridad guardada correctamente.');
-    });
+    $('btn-agregar-backup').addEventListener('click', agregarBackup);
   }
 
   if ($('importarBD')) {
-    $('importarBD').addEventListener('change', function () {
-      const archivo = this.files[0];
-      if (!archivo) return;
-
-      const lector = new FileReader();
-      lector.onload = function (e) {
-        try {
-          const datosImportados = JSON.parse(e.target.result);
-          if (!Array.isArray(datosImportados)) throw new Error("Formato incorrecto");
-
-          localStorage.setItem('reparaciones', JSON.stringify(datosImportados));
-          if ($('tabla-reparaciones')) $('tabla-reparaciones').innerHTML = '';
-          datosImportados.forEach(d => agregarFila(d, false));
-          actualizarMetricas();
-          alert("Datos importados correctamente.");
-        } catch (error) {
-          console.error("Error al importar:", error);
-          alert("Error al importar: El archivo no es válido.");
-        }
-      };
-      lector.readAsText(archivo);
-    });
+    $('importarBD').addEventListener('change', manejarImportacionJSON);
   }
 
   if ($('btn-export-excel')) {
-    $('btn-export-excel').addEventListener('click', () => {
-      const soloUna = confirm('¿Exportar solo la fila seleccionada?\nAceptar: Solo una fila\nCancelar: Toda la tabla');
-      soloUna && filaSeleccionada ? exportarFilaSeleccionadaExcel() : exportarTablaCompletaExcel();
-    });
+    $('btn-export-excel').addEventListener('click', manejarExportacionExcel);
+  }
+}
+
+function manejarEnvioFormulario(e) {
+  e.preventDefault();
+  const tipo = $('tipo-contrasena') ? $('tipo-contrasena').value : 'pin';
+  const patron = $('patron-input') ? $('patron-input').value : '';
+  const pin = $('contrasena') ? $('contrasena').value : '';
+
+  if (tipo === 'patron' && !patron.trim()) {
+    if ($('errorPatron')) $('errorPatron').style.display = 'block';
+    return;
   }
 
-  // Generar ID automático al cargar
-  if ($('controlID')) {
-    $('controlID').value = generarID();
-  }
-};
+  const nuevaReparacion = {
+    fecha: $('fecha') ? $('fecha').value : '',
+    hora: new Date().toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' }),
+    cliente: $('cliente') ? $('cliente').value : '',
+    telefono: $('telefono') ? $('telefono').value : '',
+    modelo: $('modelo') ? $('modelo').value : '',
+    reparacion: $('reparacion') ? $('reparacion').value : '',
+    tecnico: $('tecnico') ? $('tecnico').value : '',
+    notas: $('notas') ? $('notas').value : '',
+    precio: $('precio') ? $('precio').value : '0',
+    iva: calcularIVA($('precio') ? $('precio').value : '0'),
+    controlID: generarID(),
+    estado: $('estado') ? $('estado').value : 'pendiente',
+    contrasena: tipo === 'pin' ? pin : patron
+  };
+
+  agregarFila(nuevaReparacion, true);
+  if ($('formulario')) $('formulario').reset();
+  mostrarCampoContrasena();
+  actualizarMetricas();
+}
+
+function guardarJSON() {
+  const datos = JSON.parse(localStorage.getItem('reparaciones')) || [];
+  const blob = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `reparaciones_${new Date().toLocaleDateString('es-CO')}.json`;
+  a.click();
+}
+
+function agregarBackup() {
+  const datos = JSON.parse(localStorage.getItem('reparaciones')) || [];
+  const copias = JSON.parse(localStorage.getItem('copiasSeguridad') || '[]');
+
+  const nuevaCopia = {
+    fecha: new Date().toLocaleString('es-CO'),
+    tipo: 'reparaciones',
+    datos: datos
+  };
+
+  copias.push(nuevaCopia);
+  localStorage.setItem('copiasSeguridad', JSON.stringify(copias));
+  alert('✅ Copia de seguridad guardada correctamente.');
+}
+
+function manejarImportacionJSON(e) {
+  const archivo = e.target.files[0];
+  if (!archivo) return;
+
+  const lector = new FileReader();
+  lector.onload = function (e) {
+    try {
+      const datosImportados = JSON.parse(e.target.result);
+      if (!Array.isArray(datosImportados)) throw new Error("Formato incorrecto");
+
+      // Validar estructura básica de los datos
+      if (datosImportados.length > 0 && !datosImportados[0].hasOwnProperty('controlID')) {
+        throw new Error("Estructura de datos incorrecta");
+      }
+
+      localStorage.setItem('reparaciones', JSON.stringify(datosImportados));
+      if ($('tabla-reparaciones')) $('tabla-reparaciones').innerHTML = '';
+      datosImportados.forEach(d => agregarFila(d, false));
+      actualizarMetricas();
+      alert("Datos importados correctamente. Se han cargado " + datosImportados.length + " registros.");
+    } catch (error) {
+      console.error("Error al importar:", error);
+      alert("Error al importar: " + error.message);
+    }
+  };
+  lector.readAsText(archivo);
+}
+
+function manejarExportacionExcel() {
+  const soloUna = confirm('¿Exportar solo la fila seleccionada?\nAceptar: Solo una fila\nCancelar: Toda la tabla');
+  soloUna && filaSeleccionada ? exportarFilaSeleccionadaExcel() : exportarTablaCompletaExcel();
+}
 
 // === FUNCIONES AUXILIARES ===
 let contadorID = localStorage.getItem('contadorID') ? parseInt(localStorage.getItem('contadorID')) : 0;
@@ -285,7 +307,7 @@ function editarSeleccionada() {
     estado: $('estado') ? $('estado').value : 'pendiente',
     contrasena: tipo === 'pin' ? ($('contrasena') ? $('contrasena').value : '') : ($('patron-input') ? $('patron-input').value : '')
   };
-  
+
   const datos = JSON.parse(localStorage.getItem('reparaciones')) || [];
   const idx = datos.findIndex(d => d.controlID === filaSeleccionada.querySelector('td:nth-child(11)').textContent);
   if (idx !== -1) datos[idx] = reparacionEditada;
@@ -356,6 +378,7 @@ function buscarReparacion(valor) {
     ) agregarFila(d, false);
   });
 }
+
 // === EXPORTACIÓN A EXCEL ===
 function exportarTablaCompletaExcel() {
   const tabla = document.querySelector('table');
@@ -379,7 +402,126 @@ function exportarFilaSeleccionadaExcel() {
   XLSX.writeFile(wb, 'reparacion_individual.xlsx');
 }
 
+// === EXPORTACIÓN COMO IMAGEN ===
+function exportarSeleccionadaComoImagen(modo = '') {
+  if (!filaSeleccionada) return alert('Selecciona una fila primero');
+  
+  // Crear contenido HTML para la imagen
+  const contenido = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Comprobante de Reparación</title>
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+      <style>
+        body { padding: 20px; font-family: Arial, sans-serif; }
+        .comprobante { border: 2px solid #000; padding: 15px; border-radius: 10px; max-width: 400px; }
+        .titulo { text-align: center; font-weight: bold; margin-bottom: 15px; }
+        .fila { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .etiqueta { font-weight: bold; }
+      </style>
+    </head>
+    <body>
+      <div class="comprobante">
+        <div class="titulo">COMPROBANTE DE REPARACIÓN</div>
+        ${Array.from(filaSeleccionada.children).map((td, index) => {
+          const th = document.querySelector(`thead th:nth-child(${index+1})`);
+          const etiqueta = th ? th.textContent.trim() : `Campo ${index+1}`;
+          return `
+            <div class="fila">
+              <span class="etiqueta">${etiqueta}:</span>
+              <span>${td.textContent.trim()}</span>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </body>
+    </html>
+  `;
+  
+  if (modo === 'print') {
+    // Abrir ventana para imprimir
+    const ventana = window.open('', '_blank', 'width=600,height=700');
+    ventana.document.write(contenido);
+    ventana.document.close();
+    ventana.focus();
+    ventana.print();
+  } else {
+    // Descargar como HTML (se puede convertir a imagen manualmente)
+    const blob = new Blob([contenido], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `comprobante_reparacion_${new Date().getTime()}.html`;
+    a.click();
+    alert('Comprobante descargado como HTML. Puede imprimirlo o convertirlo a imagen.');
+  }
+}
 
+// === ATAJOS DE TECLADO ===
+document.addEventListener('DOMContentLoaded', function() {
+  const selectReparacion = document.getElementById('reparacion');
+  const otraReparacionContainer = document.getElementById('otraReparacionContainer');
+  const inputOtraReparacion = document.getElementById('otraReparacion');
+
+  if (selectReparacion && otraReparacionContainer) {
+    selectReparacion.addEventListener('change', function() {
+      if (this.value === 'otros') {
+        otraReparacionContainer.style.display = 'block';
+        inputOtraReparacion.setAttribute('required', 'required');
+      } else {
+        otraReparacionContainer.style.display = 'none';
+        inputOtraReparacion.removeAttribute('required');
+        inputOtraReparacion.value = '';
+      }
+    });
+  }
+
+  let esperandoNumero = false;
+
+  document.addEventListener("keydown", function(event) {
+    // Si presiona la tecla ESPACIO
+    if (event.code === "Space") {
+      event.preventDefault(); // Evita el scroll
+      esperandoNumero = true;
+      return;
+    }
+
+    // Si está esperando un número
+    if (esperandoNumero) {
+      esperandoNumero = false;
+
+      switch (event.key) {
+        case "1":
+          document.querySelector("button[type='submit']").click();
+          break;
+        case "2":
+          document.getElementById("btn-editar").click();
+          break;
+        case "3":
+          document.getElementById("btn-eliminar").click();
+          break;
+        case "4":
+          document.getElementById("btn-export-excel").click();
+          break;
+        case "5":
+          document.querySelector("button[data-bs-target='#modal-exportar-json']").click();
+          break;
+        case "6":
+          document.getElementById("btn-descargar-imagen").click();
+          break;
+        case "7":
+          document.getElementById("btn-imprimir").click();
+          break;
+        case "8":
+          document.getElementById("importarBD").click();
+          break;
+        default:
+          console.log("Número no válido.");
+      }
+    }
+  });
+});
 
 // === EXPORTACIÓN DE IMAGEN/FACTURA ===
 function exportarSeleccionadaComoImagen(tipo = null) {
