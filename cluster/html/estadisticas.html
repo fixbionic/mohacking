@@ -1,537 +1,1190 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fixbionic | Backups y Métricas</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  
-  <style>
-    :root {
-      --primary-color: #ffffff;
-      --secondary-color: #FF7F00;
-      --secondary-light: #FFA34D;
-      --secondary-dark: #CC6600;
-      --text-color: #333333;
-      --text-light: #666666;
-      --glass-bg: rgba(255, 255, 255, 0.7);
-      --glass-border: rgba(255, 255, 255, 0.8);
-      --glass-shadow: rgba(0, 0, 0, 0.1);
-    }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fixbionic | Backups y Métricas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #ffffff;
+            --secondary-color: #FF7F00;
+            --secondary-light: #FFA34D;
+            --secondary-dark: #CC6600;
+            --text-color: #333333;
+            --text-light: #666666;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            --glass-shadow: rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 2rem;
+            background-image: radial-gradient(circle at 15% 50%, rgba(255, 165, 0, 0.05) 0%, transparent 25%),
+                            radial-gradient(circle at 85% 30%, rgba(255, 165, 0, 0.05) 0%, transparent 25%);
+        }
+        
+        /* Efecto de vidrio líquido (glassmorphism) */
+        .glass-effect {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px var(--glass-shadow);
+            border-radius: 12px;
+        }
+        
+        /* Sidebar con efecto de vidrio */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 250px;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-right: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 4px 0 16px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .sidebar h4 {
+            color: var(--secondary-color);
+            font-weight: 700;
+            text-align: center;
+            padding: 1rem 0;
+            border-bottom: 2px solid var(--secondary-light);
+            margin-bottom: 1.5rem;
+        }
+        
+        .nav-link {
+            color: var(--text-color);
+            padding: 0.75rem 1rem;
+            margin: 0.25rem 0;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover,
+        .nav-link.active {
+            background-color: var(--secondary-light);
+            color: white;
+        }
+        
+        .accordion-button {
+            background-color: var(--secondary-color) !important;
+            color: white !important;
+            border-radius: 8px !important;
+            font-weight: 600;
+        }
+        
+        .accordion-button:not(.collapsed) {
+            box-shadow: 0 0 0 0.2rem rgba(255, 127, 0, 0.25);
+        }
+        
+        /* Contenido principal */
+        .main-content {
+            margin-left: 250px;
+            padding: 2rem;
+        }
+        
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+                padding: 1rem 0.5rem;
+            }
+            
+            .sidebar h4 {
+                font-size: 1rem;
+                writing-mode: vertical-rl;
+                text-orientation: mixed;
+                margin: 0 auto;
+            }
+            
+            .nav-link span {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 80px;
+            }
+            
+            body {
+                padding: 1rem;
+            }
+        }
+        
+        /* Títulos */
+        h4 {
+            color: var(--secondary-color);
+            font-weight: 700;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        h4:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: var(--secondary-color);
+            border-radius: 2px;
+        }
+        
+        /* Tarjetas */
+        .card {
+            border: none;
+            border-radius: 12px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px var(--glass-shadow);
+            transition: transform 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+        
+        /* Botones */
+        .btn {
+            border-radius: 8px;
+            padding: 0.5rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-dark);
+            border-color: var(--secondary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-success {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .btn-success:hover {
+            background-color: var(--secondary-dark);
+            border-color: var(--secondary-dark);
+        }
+        
+        .btn-outline-success {
+            color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .btn-outline-success:hover {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        /* Tablas */
+        .table {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .table thead th {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-weight: 600;
+        }
+        
+        .table tbody td {
+            padding: 1rem;
+            vertical-align: middle;
+        }
+        
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(255, 163, 77, 0.1);
+        }
+        
+        .table-hover tbody tr:hover {
+            background-color: rgba(255, 163, 77, 0.2);
+        }
+        
+        /* Modal */
+        .modal-content {
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+        }
+        
+        .modal-header {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        /* Formularios */
+        .form-control,
+        .form-select {
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(255, 127, 0, 0.25);
+        }
+        
+        /* Animaciones suaves */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Mejoras visuales para elementos específicos */
+        #graficoAccesorios {
+            border-radius: 12px;
+            background: white;
+            padding: 1rem;
+        }
+        
+        /* Estilo para saldo negativo */
+        .saldo-negativo {
+            color: #dc3545 !important;
+        }
 
-    body {
-      background-color: var(--primary-color);
-      color: var(--text-color);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      min-height: 100vh;
-      padding: 2rem;
-      background-image: 
-        radial-gradient(circle at 15% 50%, rgba(255, 165, 0, 0.05) 0%, transparent 25%),
-        radial-gradient(circle at 85% 30%, rgba(255, 165, 0, 0.05) 0%, transparent 25%);
-    }
-
-    /* Efecto de vidrio líquido (glassmorphism) */
-    .glass-effect {
-      background: var(--glass-bg);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border: 1px solid var(--glass-border);
-      box-shadow: 0 8px 32px var(--glass-shadow);
-      border-radius: 12px;
-    }
-
-    /* Sidebar con efecto de vidrio */
-    .sidebar {
-      position: fixed;
-      left: 0;
-      top: 0;
-      height: 100vh;
-      width: 250px;
-      padding: 1.5rem;
-      background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-right: 1px solid rgba(255, 255, 255, 0.9);
-      box-shadow: 4px 0 16px rgba(0, 0, 0, 0.05);
-      z-index: 1000;
-      overflow-y: auto;
-    }
-
-    .sidebar h4 {
-      color: var(--secondary-color);
-      font-weight: 700;
-      text-align: center;
-      padding: 1rem 0;
-      border-bottom: 2px solid var(--secondary-light);
-      margin-bottom: 1.5rem;
-    }
-
-    .nav-link {
-      color: var(--text-color);
-      padding: 0.75rem 1rem;
-      margin: 0.25rem 0;
-      border-radius: 8px;
-      transition: all 0.3s ease;
-    }
-
-    .nav-link:hover, .nav-link.active {
-      background-color: var(--secondary-light);
-      color: white;
-    }
-
-    .accordion-button {
-      background-color: var(--secondary-color) !important;
-      color: white !important;
-      border-radius: 8px !important;
-      font-weight: 600;
-    }
-
-    .accordion-button:not(.collapsed) {
-      box-shadow: 0 0 0 0.2rem rgba(255, 127, 0, 0.25);
-    }
-
-    /* Contenido principal */
-    .main-content {
-      margin-left: 250px;
-      padding: 2rem;
-    }
-
-    @media (max-width: 992px) {
-      .sidebar {
-        width: 80px;
-        padding: 1rem 0.5rem;
-      }
-      .sidebar h4 {
-        font-size: 1rem;
-        writing-mode: vertical-rl;
-        text-orientation: mixed;
-        margin: 0 auto;
-      }
-      .nav-link span {
-        display: none;
-      }
-      .main-content {
-        margin-left: 80px;
-      }
-      body {
-        padding: 1rem;
-      }
-    }
-
-    /* Títulos */
-    h4 {
-      color: var(--secondary-color);
-      font-weight: 700;
-      position: relative;
-      padding-bottom: 0.5rem;
-    }
-
-    h4:after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 60px;
-      height: 4px;
-      background: var(--secondary-color);
-      border-radius: 2px;
-    }
-
-    /* Tarjetas */
-    .card {
-      border: none;
-      border-radius: 12px;
-      background: var(--glass-bg);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      box-shadow: 0 8px 32px var(--glass-shadow);
-      transition: transform 0.3s;
-    }
-
-    .card:hover {
-      transform: translateY(-5px);
-    }
-
-    .card-header {
-      background-color: var(--secondary-color);
-      color: white;
-      border: none;
-      font-weight: 600;
-    }
-
-    /* Botones */
-    .btn {
-      border-radius: 8px;
-      padding: 0.5rem 1.5rem;
-      font-weight: 600;
-      transition: all 0.3s;
-    }
-
-    .btn-primary {
-      background-color: var(--secondary-color);
-      border-color: var(--secondary-color);
-    }
-
-    .btn-primary:hover {
-      background-color: var(--secondary-dark);
-      border-color: var(--secondary-dark);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .btn-success {
-      background-color: var(--secondary-color);
-      border-color: var(--secondary-color);
-    }
-
-    .btn-success:hover {
-      background-color: var(--secondary-dark);
-      border-color: var(--secondary-dark);
-    }
-
-    .btn-outline-success {
-      color: var(--secondary-color);
-      border-color: var(--secondary-color);
-    }
-
-    .btn-outline-success:hover {
-      background-color: var(--secondary-color);
-      color: white;
-    }
-
-    /* Tablas */
-    .table {
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    .table thead th {
-      background-color: var(--secondary-color);
-      color: white;
-      border: none;
-      padding: 1rem;
-      font-weight: 600;
-    }
-
-    .table tbody td {
-      padding: 1rem;
-      vertical-align: middle;
-    }
-
-    .table-striped tbody tr:nth-of-type(odd) {
-      background-color: rgba(255, 163, 77, 0.1);
-    }
-
-    .table-hover tbody tr:hover {
-      background-color: rgba(255, 163, 77, 0.2);
-    }
-
-    /* Modal */
-    .modal-content {
-      border-radius: 12px;
-      overflow: hidden;
-      background: var(--glass-bg);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid var(--glass-border);
-    }
-
-    .modal-header {
-      background-color: var(--secondary-color);
-      color: white;
-    }
-
-    /* Formularios */
-    .form-control, .form-select {
-      border-radius: 8px;
-      padding: 0.75rem 1rem;
-      border: 1px solid #ddd;
-      transition: all 0.3s;
-    }
-
-    .form-control:focus, .form-select:focus {
-      border-color: var(--secondary-color);
-      box-shadow: 0 0 0 0.2rem rgba(255, 127, 0, 0.25);
-    }
-
-    /* Animaciones suaves */
-    .fade-in {
-      animation: fadeIn 0.5s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Mejoras visuales para elementos específicos */
-    #graficoAccesorios {
-      border-radius: 12px;
-      background: white;
-      padding: 1rem;
-    }
-  </style>
+        /* Estilos para estados de deudas */
+        .deuda-pendiente {
+            background-color: rgba(255, 193, 7, 0.2) !important;
+        }
+        
+        .deuda-pagada {
+            background-color: rgba(40, 167, 69, 0.2) !important;
+        }
+        
+        .prestamo-pendiente {
+            background-color: rgba(23, 162, 184, 0.2) !important;
+        }
+    </style>
 </head>
-
 <body class="fade-in">
-  <!-- Sidebar con Menú Desplegable -->
-  <aside class="sidebar">
-    <h4>Fixbionic</h4>
-    <div class="accordion" id="menuAccordion">
-      <div class="accordion-item bg-transparent border-0">
-        <h2 class="accordion-header">
-          <button class="accordion-button" type="button" data-bs-toggle="collapse"
-            data-bs-target="#modulosMenu">
-            Menú
-          </button>
-        </h2>
-        <div id="modulosMenu" class="accordion-collapse collapse show">
-          <div class="accordion-body p-0">
-            <a class="nav-link" href="../../index.html">
-              <i class="bi bi-house-door me-2"></i><span>Inicio</span>
-            </a>
-            <a class="nav-link" href="acsesorios.html">
-              <i class="bi bi-plugin me-2"></i><span>Accesorios</span>
-            </a>
-            <a class="nav-link" href="estadisticas.html">
-              <i class="bi bi-bar-chart me-2"></i><span>Estadísticas</span>
-            </a>
-            <a class="nav-link" href="reparacion.html">
-              <i class="bi bi-tools me-2"></i><span>Reparaciones</span>
-            </a>
-            <a class="nav-link active" href="#" id="cajaMenorLink">
-              <i class="bi bi-cash-coin me-2"></i><span>Caja Menor</span>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </aside>
-
-  <!-- Contenido Principal -->
-  <main class="main-content">
-    <!-- SECCIÓN: Caja Menor -->
-    <section id="cajaMenorSection" class="mb-4">
-      <div class="glass-effect p-4">
-        <h4 class="mb-3">Control de Caja Menor</h4>
-        
-        <div class="row mb-4">
-          <div class="col-md-4">
-            <div class="card mb-4">
-              <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-wallet2 me-2"></i>Saldo Actual</h5>
-              </div>
-              <div class="card-body text-center">
-                <h2 id="saldoCaja" class="text-success">$0</h2>
-              </div>
-            </div>
-          </div>
-          
-          <div class="col-md-4">
-            <div class="card mb-4">
-              <div class="card-header bg-info text-white">
-                <h5 class="mb-0"><i class="bi bi-credit-card me-2"></i>Total Deudas Activas</h5>
-              </div>
-              <div class="card-body text-center">
-                <h2 id="totalDeudas" class="text-info">$0</h2>
-              </div>
-            </div>
-          </div>
-          
-          <div class="col-md-4">
-            <div class="card mb-4">
-              <div class="card-header bg-warning text-white">
-                <h5 class="mb-0"><i class="bi bi-currency-exchange me-2"></i>Préstamos Pendientes</h5>
-              </div>
-              <div class="card-body text-center">
-                <h2 id="totalPrestamos" class="text-warning">$0</h2>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="row">
-          <div class="col-md-6">
-            <div class="card">
-              <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-cash-stack me-2"></i>Movimientos de Caja</h5>
-              </div>
-              <div class="card-body">
-                <div class="d-grid gap-2">
-                  <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalIngreso">
-                    <i class="bi bi-plus-circle me-2"></i>Ingresar Dinero
-                  </button>
-                  <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modalRetiro">
-                    <i class="bi bi-dash-circle me-2"></i>Retirar Dinero
-                  </button>
-                  <button class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#modalHistorial">
-                    <i class="bi bi-clock-history me-2"></i>Ver Historial
-                  </button>
+    <!-- Sidebar con Menú Desplegable -->
+    <aside class="sidebar">
+        <h4>Fixbionic</h4>
+        <div class="accordion" id="menuAccordion">
+            <div class="accordion-item bg-transparent border-0">
+                <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#modulosMenu">
+                        Menú
+                    </button>
+                </h2>
+                <div id="modulosMenu" class="accordion-collapse collapse show">
+                    <div class="accordion-body p-0">
+                        <a class="nav-link" href="../../index.html">
+                            <i class="bi bi-house-door me-2"></i><span>Inicio</span>
+                        </a>
+                        <a class="nav-link" href="acsesorios.html">
+                            <i class="bi bi-plugin me-2"></i><span>Accesorios</span>
+                        </a>
+                        <a class="nav-link" href="estadisticas.html">
+                            <i class="bi bi-bar-chart me-2"></i><span>Estadísticas</span>
+                        </a>
+                        <a class="nav-link" href="reparacion.html">
+                            <i class="bi bi-tools me-2"></i><span>Reparaciones</span>
+                        </a>
+                        <a class="nav-link active" href="#" id="cajaMenorLink">
+                            <i class="bi bi-cash-coin me-2"></i><span>Caja Menor</span>
+                        </a>
+                    </div>
                 </div>
-              </div>
             </div>
-          </div>
-          
-          <div class="col-md-6">
-            <div class="card">
-              <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"><i class="bi bi-receipt me-2"></i>Gestión de Deudas</h5>
-              </div>
-              <div class="card-body">
-                <div class="d-grid gap-2">
-                  <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalDebemos">
-                    <i class="bi bi-arrow-up-right-circle me-2"></i>Registrar Lo Que Debemos
-                  </button>
-                  <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalNosDeben">
-                    <i class="bi bi-arrow-down-left-circle me-2"></i>Registrar Lo Que Nos Deben
-                  </button>
-                  <button class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#modalGestionDeudas">
-                    <i class="bi bi-gear me-2"></i>Gestionar Deudas
-                  </button>
+        </div>
+    </aside>
+
+    <!-- Contenido Principal -->
+    <main class="main-content">
+        <!-- SECCIÓN: Caja Menor -->
+        <section id="cajaMenorSection" class="mb-4">
+            <div class="glass-effect p-4">
+                <h4 class="mb-3">Control de Caja Menor</h4>
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="bi bi-wallet2 me-2"></i>Saldo Actual</h5>
+                            </div>
+                            <div class="card-body text-center">
+                                <h2 id="saldoCaja" class="text-success">$0</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card mb-4">
+                            <div class="card-header bg-info text-white">
+                                <h5 class="mb-0"><i class="bi bi-credit-card me-2"></i>Total Deudas Activas</h5>
+                            </div>
+                            <div class="card-body text-center">
+                                <h2 id="totalDeudas" class="text-info">$0</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card mb-4">
+                            <div class="card-header bg-warning text-white">
+                                <h5 class="mb-0"><i class="bi bi-currency-exchange me-2"></i>Préstamos Pendientes</h5>
+                            </div>
+                            <div class="card-body text-center">
+                                <h2 id="totalPrestamos" class="text-warning">$0</h2>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="bi bi-cash-stack me-2"></i>Movimientos de Caja</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalIngreso">
+                                        <i class="bi bi-plus-circle me-2"></i>Ingresar Dinero
+                                    </button>
+                                    <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modalRetiro">
+                                        <i class="bi bi-dash-circle me-2"></i>Retirar Dinero
+                                    </button>
+                                    <button class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#modalHistorial">
+                                        <i class="bi bi-clock-history me-2"></i>Ver Historial
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0"><i class="bi bi-receipt me-2"></i>Gestión de Deudas</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalDebemos">
+                                        <i class="bi bi-arrow-up-right-circle me-2"></i>Registrar Lo Que Debemos
+                                    </button>
+                                    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalNosDeben">
+                                        <i class="bi bi-arrow-down-left-circle me-2"></i>Registrar Lo Que Nos Deben
+                                    </button>
+                                    <button class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#modalGestionDeudas">
+                                        <i class="bi bi-gear me-2"></i>Gestionar Deudas
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
+        </section>
+
+        <div class="row g-4">
+            <!-- SECCIÓN: Copias de Seguridad -->
+            <section class="col-md-7">
+                <div class="glass-effect p-4 h-100">
+                    <h4 class="mb-3">Copias de Seguridad JSON</h4>
+                    <!-- Tabla de copias -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-striped align-middle text-center">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Fecha</th>
+                                    <th>Tipo</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-backups">
+                                <!-- Las filas se generan dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Contador de copias de seguridad -->
+                    <p class="text-end mt-3">
+                        <strong>Total de Copias:</strong> <span id="total-copias">0</span>
+                    </p>
+                </div>
+            </section>
+
+            <!-- SECCIÓN: Métricas del Inventario -->
+            <section class="col-md-5">
+                <div class="glass-effect p-4 h-100">
+                    <h4 class="mb-3">Métricas del Inventario</h4>
+                    <div class="text-center">
+                        <canvas id="graficoAccesorios" width="400" height="300"></canvas>
+                    </div>
+                </div>
+            </section>
         </div>
-      </div>
-    </section>
 
-    <div class="row g-4">
-      <!-- SECCIÓN: Copias de Seguridad -->
-      <section class="col-md-7">
-        <div class="glass-effect p-4 h-100">
-          <h4 class="mb-3">Copias de Seguridad JSON</h4>
-
-          <!-- Tabla de copias -->
-          <div class="table-responsive">
-            <table class="table table-bordered table-hover table-striped align-middle text-center">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Fecha</th>
-                  <th>Tipo</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody id="tabla-backups">
-                <!-- Las filas se generan dinámicamente -->
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Contador de copias de seguridad -->
-          <p class="text-end mt-3">
-            <strong>Total de Copias:</strong>
-            <span id="total-copias">0</span>
-          </p>
+        <!-- Imagen ilustrativa -->
+        <div class="text-center mt-5">
+            <img src="../../data/img/a1.png" alt="Imagen ilustrativa" class="img-fluid rounded" style="max-width: 400px;" />
         </div>
-      </section>
+    </main>
 
-      <!-- SECCIÓN: Métricas del Inventario -->
-      <section class="col-md-5">
-        <div class="glass-effect p-4 h-100">
-          <h4 class="mb-3">Métricas del Inventario</h4>
-
-          <!-- Gráfico -->
-          <canvas id="graficoAccesorios" style="width: 100%; height: 300px;"></canvas>
-
-          <!-- Tabla de métricas -->
-          <div class="mt-4">
-            <table class="table table-bordered table-sm text-center">
-              <tbody>
-                <tr>
-                  <td id="total-registros">0</td>
-                  <td id="total-unidades">0</td>
-                  <td id="valor-total">0</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+    <!-- Modal para ingreso de dinero -->
+    <div class="modal fade" id="modalIngreso" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-plus-circle me-2"></i>Ingresar Dinero a Caja</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formIngreso">
+                        <div class="mb-3">
+                            <label for="montoIngreso" class="form-label">Monto a Ingresar</label>
+                            <input type="number" class="form-control" id="montoIngreso" min="1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="conceptoIngreso" class="form-label">Concepto</label>
+                            <input type="text" class="form-control" id="conceptoIngreso" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fechaIngreso" class="form-label">Fecha</label>
+                            <input type="date" class="form-control" id="fechaIngreso" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" id="btnConfirmarIngreso">Ingresar</button>
+                </div>
+            </div>
         </div>
-      </section>
     </div>
 
-    <!-- Imagen ilustrativa -->
-    <div class="text-center mt-5">
-      <img src="../../data/img/a1.png" alt="Imagen ilustrativa" class="img-fluid rounded" style="max-width: 400px;" />
+    <!-- Modal para retiro de dinero -->
+    <div class="modal fade" id="modalRetiro" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title"><i class="bi bi-dash-circle me-2"></i>Retirar Dinero de Caja</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formRetiro">
+                        <div class="mb-3">
+                            <label for="montoRetiro" class="form-label">Monto a Retirar</label>
+                            <input type="number" class="form-control" id="montoRetiro" min="1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="conceptoRetiro" class="form-label">Concepto</label>
+                            <input type="text" class="form-control" id="conceptoRetiro" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fechaRetiro" class="form-label">Fecha</label>
+                            <input type="date" class="form-control" id="fechaRetiro" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="passwordRetiro" class="form-label">Contraseña para retirar</label>
+                            <input type="password" class="form-control" id="passwordRetiro" required>
+                            <div class="form-text">Se requiere contraseña para realizar retiros</div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="btnConfirmarRetiro">Retirar</button>
+                </div>
+            </div>
+        </div>
     </div>
-  </main>
 
-  <!-- Modal para ingreso de dinero -->
-  <div class="modal fade" id="modalIngreso" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title"><i class="bi bi-plus-circle me-2"></i>Ingresar Dinero a Caja</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="formIngreso">
-            <div class="mb-3">
-              <label for="montoIngreso" class="form-label">Monto a Ingresar</label>
-              <input type="number" class="form-control" id="montoIngreso" min="1" required>
+    <!-- Modal para historial de movimientos -->
+    <div class="modal fade" id="modalHistorial" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-clock-history me-2"></i>Historial de Movimientos</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Tipo</th>
+                                    <th>Concepto</th>
+                                    <th>Monto</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historialBody">
+                                <!-- Contenido generado dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
             </div>
-            <div class="mb-3">
-              <label for="conceptoIngreso" class="form-label">Concepto</label>
-              <input type="text" class="form-control" id="conceptoIngreso" required>
-            </div>
-            <div class="mb-3">
-              <label for="fechaIngreso" class="form-label">Fecha</label>
-              <input type="date" class="form-control" id="fechaIngreso" required>
-            </div>
-          </form>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-success" id="btnConfirmarIngreso">Ingresar</button>
-        </div>
-      </div>
     </div>
-  </div>
 
-  <!-- Modal para retiro de dinero -->
-  <div class="modal fade" id="modalRetiro" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header bg-danger text-white">
-          <h5 class="modal-title"><i class="bi bi-dash-circle me-2"></i>Retirar Dinero de Caja</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Modal para registrar lo que debemos -->
+    <div class="modal fade" id="modalDebemos" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-white">
+                    <h5 class="modal-title"><i class="bi bi-arrow-up-right-circle me-2"></i>Registrar Lo Que Debemos</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formDebemos">
+                        <div class="mb-3">
+                            <label for="deudor" class="form-label">A quién le debemos</label>
+                            <input type="text" class="form-control" id="deudor" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="montoDeuda" class="form-label">Monto que debemos</label>
+                            <input type="number" class="form-control" id="montoDeuda" min="1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="conceptoDeuda" class="form-label">Concepto de la deuda</label>
+                            <input type="text" class="form-control" id="conceptoDeuda" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fechaDeuda" class="form-label">Fecha</label>
+                            <input type="date" class="form-control" id="fechaDeuda" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fechaLimiteDeuda" class="form-label">Fecha límite de pago (opcional)</label>
+                            <input type="date" class="form-control" id="fechaLimiteDeuda">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-warning" id="btnConfirmarDeuda">Registrar Deuda</button>
+                </div>
+            </div>
         </div>
-        <div class="modal-body">
-          <form id="formRetiro">
-            <div class="mb-3">
-              <label for="montoRetiro" class="form-label">Monto a Retirar</label>
-              <input type="number" class="form-control" id="montoRetiro" min="1" required>
-            </div>
-            <div class="mb-3">
-              <label for="conceptoRetiro" class="form-label">Concepto</label>
-              <input type="text" class="form-control" id="conceptoRetiro" required>
-            </div>
-            <div class="mb-3">
-              <label for="fechaRetiro" class="form-label">Fecha</label>
-              <input type="date" class="form-control" id="fechaRetiro" required>
-            </div>
-            <div class="mb-3">
-              <label for="passwordRetiro" class="form-label">Contraseña para retirar</label>
-              <input type="password" class="form-control" id="passwordRetiro" required>
-              <div class="form-text">Se requiere contraseña para realizar retiros</div>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-danger" id="btnConfirmarRetiro">Retirar</button>
-        </div>
-      </div>
     </div>
-  </div>
 
-  <!-- Bootstrap + Script personalizado -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  
+    <!-- Modal para registrar lo que nos deben -->
+    <div class="modal fade" id="modalNosDeben" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title"><i class="bi bi-arrow-down-left-circle me-2"></i>Registrar Lo Que Nos Deben</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formNosDeben">
+                        <div class="mb-3">
+                            <label for="acreedor" class="form-label">Quién nos debe</label>
+                            <input type="text" class="form-control" id="acreedor" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="montoPrestamo" class="form-label">Monto que nos deben</label>
+                            <input type="number" class="form-control" id="montoPrestamo" min="1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="conceptoPrestamo" class="form-label">Concepto del préstamo</label>
+                            <input type="text" class="form-control" id="conceptoPrestamo" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fechaPrestamo" class="form-label">Fecha</label>
+                            <input type="date" class="form-control" id="fechaPrestamo" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fechaLimitePrestamo" class="form-label">Fecha límite de pago (opcional)</label>
+                            <input type="date" class="form-control" id="fechaLimitePrestamo">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-info" id="btnConfirmarPrestamo">Registrar Préstamo</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para gestionar deudas -->
+    <div class="modal fade" id="modalGestionDeudas" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title"><i class="bi bi-gear me-2"></i>Gestión de Deudas y Préstamos</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs" id="deudasTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="deudas-tab" data-bs-toggle="tab" data-bs-target="#deudas" type="button" role="tab">Deudas Activas</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="prestamos-tab" data-bs-toggle="tab" data-bs-target="#prestamos" type="button" role="tab">Préstamos Pendientes</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="historial-tab" data-bs-toggle="tab" data-bs-target="#historialDeudas" type="button" role="tab">Historial</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content p-3" id="deudasTabsContent">
+                        <div class="tab-pane fade show active" id="deudas" role="tabpanel">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Deudor</th>
+                                            <th>Concepto</th>
+                                            <th>Monto</th>
+                                            <th>Fecha</th>
+                                            <th>Límite</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tablaDeudas">
+                                        <!-- Contenido generado dinámicamente -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="prestamos" role="tabpanel">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Acreedor</th>
+                                            <th>Concepto</th>
+                                            <th>Monto</th>
+                                            <th>Fecha</th>
+                                            <th>Límite</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tablaPrestamos">
+                                        <!-- Contenido generado dinámicamente -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="historialDeudas" role="tabpanel">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Tipo</th>
+                                            <th>Persona</th>
+                                            <th>Concepto</th>
+                                            <th>Monto</th>
+                                            <th>Fecha</th>
+                                            <th>Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tablaHistorialDeudas">
+                                        <!-- Contenido generado dinámicamente -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap + Script personalizado -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Variables globales
+        let saldoCaja = 0;
+        let movimientos = [];
+        let deudas = [];
+        let prestamos = [];
+        let historialDeudas = [];
+        const PASSWORD_RETIRO = "admin123"; // Contraseña para retiros
+
+        // Inicialización cuando el DOM está listo
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar datos desde localStorage
+            cargarDatos();
+            
+            // Actualizar la interfaz
+            actualizarInterfaz();
+            
+            // Configurar fecha actual en los formularios
+            const fechaActual = new Date().toISOString().split('T')[0];
+            document.getElementById('fechaIngreso').value = fechaActual;
+            document.getElementById('fechaRetiro').value = fechaActual;
+            document.getElementById('fechaDeuda').value = fechaActual;
+            document.getElementById('fechaPrestamo').value = fechaActual;
+            
+            // Event listeners para los botones
+            document.getElementById('btnConfirmarIngreso').addEventListener('click', procesarIngreso);
+            document.getElementById('btnConfirmarRetiro').addEventListener('click', procesarRetiro);
+            document.getElementById('btnConfirmarDeuda').addEventListener('click', registrarDeuda);
+            document.getElementById('btnConfirmarPrestamo').addEventListener('click', registrarPrestamo);
+            
+            // Inicializar gráfico de métricas
+            inicializarGrafico();
+        });
+
+        // Cargar datos desde localStorage
+        function cargarDatos() {
+            const datosGuardados = localStorage.getItem('cajaMenorDatos');
+            if (datosGuardados) {
+                const datos = JSON.parse(datosGuardados);
+                saldoCaja = datos.saldoCaja || 0;
+                movimientos = datos.movimientos || [];
+                deudas = datos.deudas || [];
+                prestamos = datos.prestamos || [];
+                historialDeudas = datos.historialDeudas || [];
+            }
+        }
+
+        // Guardar datos en localStorage
+        function guardarDatos() {
+            const datos = {
+                saldoCaja,
+                movimientos,
+                deudas,
+                prestamos,
+                historialDeudas
+            };
+            localStorage.setItem('cajaMenorDatos', JSON.stringify(datos));
+        }
+
+        // Actualizar la interfaz de usuario
+        function actualizarInterfaz() {
+            // Actualizar saldo
+            const saldoElement = document.getElementById('saldoCaja');
+            saldoElement.textContent = `$${saldoCaja.toFixed(2)}`;
+            
+            // Cambiar color si es negativo
+            if (saldoCaja < 0) {
+                saldoElement.classList.remove('text-success');
+                saldoElement.classList.add('saldo-negativo');
+            } else {
+                saldoElement.classList.remove('saldo-negativo');
+                saldoElement.classList.add('text-success');
+            }
+            
+            // Calcular total de deudas activas
+            const deudasActivas = deudas.filter(deuda => deuda.estado === 'pendiente');
+            const totalDeudas = deudasActivas.reduce((total, deuda) => total + deuda.monto, 0);
+            document.getElementById('totalDeudas').textContent = `$${totalDeudas.toFixed(2)}`;
+            
+            // Calcular total de préstamos pendientes
+            const prestamosPendientes = prestamos.filter(prestamo => prestamo.estado === 'pendiente');
+            const totalPrestamos = prestamosPendientes.reduce((total, prestamo) => total + prestamo.monto, 0);
+            document.getElementById('totalPrestamos').textContent = `$${totalPrestamos.toFixed(2)}`;
+        }
+
+        // Procesar ingreso de dinero
+        function procesarIngreso() {
+            const monto = parseFloat(document.getElementById('montoIngreso').value);
+            const concepto = document.getElementById('conceptoIngreso').value;
+            const fecha = document.getElementById('fechaIngreso').value;
+            
+            if (!monto || monto <= 0 || !concepto || !fecha) {
+                alert('Por favor, complete todos los campos correctamente.');
+                return;
+            }
+            
+            // Actualizar saldo
+            saldoCaja += monto;
+            
+            // Registrar movimiento
+            movimientos.push({
+                tipo: 'ingreso',
+                monto,
+                concepto,
+                fecha,
+                timestamp: new Date().getTime()
+            });
+            
+            // Guardar y actualizar
+            guardarDatos();
+            actualizarInterfaz();
+            
+            // Cerrar modal y resetear formulario
+            bootstrap.Modal.getInstance(document.getElementById('modalIngreso')).hide();
+            document.getElementById('formIngreso').reset();
+            
+            alert('Ingreso registrado correctamente.');
+        }
+
+        // Procesar retiro de dinero
+        function procesarRetiro() {
+            const monto = parseFloat(document.getElementById('montoRetiro').value);
+            const concepto = document.getElementById('conceptoRetiro').value;
+            const fecha = document.getElementById('fechaRetiro').value;
+            const password = document.getElementById('passwordRetiro').value;
+            
+            if (!monto || monto <= 0 || !concepto || !fecha || !password) {
+                alert('Por favor, complete todos los campos correctamente.');
+                return;
+            }
+            
+            if (password !== PASSWORD_RETIRO) {
+                alert('Contraseña incorrecta. No puede realizar retiros.');
+                return;
+            }
+            
+            if (monto > saldoCaja) {
+                if (!confirm(`El monto a retirar ($${monto}) es mayor que el saldo actual ($${saldoCaja}). ¿Desea continuar?`)) {
+                    return;
+                }
+            }
+            
+            // Actualizar saldo
+            saldoCaja -= monto;
+            
+            // Registrar movimiento
+            movimientos.push({
+                tipo: 'retiro',
+                monto,
+                concepto,
+                fecha,
+                timestamp: new Date().getTime()
+            });
+            
+            // Guardar y actualizar
+            guardarDatos();
+            actualizarInterfaz();
+            
+            // Cerrar modal y resetear formulario
+            bootstrap.Modal.getInstance(document.getElementById('modalRetiro')).hide();
+            document.getElementById('formRetiro').reset();
+            
+            alert('Retiro registrado correctamente.');
+        }
+
+        // Registrar una deuda (lo que debemos)
+        function registrarDeuda() {
+            const deudor = document.getElementById('deudor').value;
+            const monto = parseFloat(document.getElementById('montoDeuda').value);
+            const concepto = document.getElementById('conceptoDeuda').value;
+            const fecha = document.getElementById('fechaDeuda').value;
+            const fechaLimite = document.getElementById('fechaLimiteDeuda').value;
+            
+            if (!deudor || !monto || monto <= 0 || !concepto || !fecha) {
+                alert('Por favor, complete todos los campos obligatorios.');
+                return;
+            }
+            
+            // Registrar deuda
+            deudas.push({
+                id: new Date().getTime(),
+                tipo: 'deuda',
+                deudor,
+                monto,
+                concepto,
+                fecha,
+                fechaLimite: fechaLimite || null,
+                estado: 'pendiente',
+                timestamp: new Date().getTime()
+            });
+            
+            // Guardar y actualizar
+            guardarDatos();
+            actualizarInterfaz();
+            
+            // Cerrar modal y resetear formulario
+            bootstrap.Modal.getInstance(document.getElementById('modalDebemos')).hide();
+            document.getElementById('formDebemos').reset();
+            
+            alert('Deuda registrada correctamente.');
+        }
+
+        // Registrar un préstamo (lo que nos deben)
+        function registrarPrestamo() {
+            const acreedor = document.getElementById('acreedor').value;
+            const monto = parseFloat(document.getElementById('montoPrestamo').value);
+            const concepto = document.getElementById('conceptoPrestamo').value;
+            const fecha = document.getElementById('fechaPrestamo').value;
+            const fechaLimite = document.getElementById('fechaLimitePrestamo').value;
+            
+            if (!acreedor || !monto || monto <= 0 || !concepto || !fecha) {
+                alert('Por favor, complete todos los campos obligatorios.');
+                return;
+            }
+            
+            // Registrar préstamo
+            prestamos.push({
+                id: new Date().getTime(),
+                tipo: 'prestamo',
+                acreedor,
+                monto,
+                concepto,
+                fecha,
+                fechaLimite: fechaLimite || null,
+                estado: 'pendiente',
+                timestamp: new Date().getTime()
+            });
+            
+            // Guardar y actualizar
+            guardarDatos();
+            actualizarInterfaz();
+            
+            // Cerrar modal y resetear formulario
+            bootstrap.Modal.getInstance(document.getElementById('modalNosDeben')).hide();
+            document.getElementById('formNosDeben').reset();
+            
+            alert('Préstamo registrado correctamente.');
+        }
+
+        // Marcar deuda como pagada
+        function pagarDeuda(id) {
+            const deudaIndex = deudas.findIndex(deuda => deuda.id === id);
+            if (deudaIndex !== -1) {
+                const deuda = deudas[deudaIndex];
+                deuda.estado = 'pagada';
+                deuda.fechaPago = new Date().toISOString().split('T')[0];
+                
+                // Mover al historial
+                historialDeudas.push(deuda);
+                deudas.splice(deudaIndex, 1);
+                
+                // Guardar y actualizar
+                guardarDatos();
+                actualizarInterfaz();
+                
+                // Si el modal está abierto, actualizar la tabla
+                if (document.getElementById('modalGestionDeudas').classList.contains('show')) {
+                    cargarTablaDeudas();
+                    cargarTablaHistorial();
+                }
+                
+                alert('Deuda marcada como pagada.');
+            }
+        }
+
+        // Marcar préstamo como cobrado
+        function cobrarPrestamo(id) {
+            const prestamoIndex = prestamos.findIndex(prestamo => prestamo.id === id);
+            if (prestamoIndex !== -1) {
+                const prestamo = prestamos[prestamoIndex];
+                prestamo.estado = 'cobrado';
+                prestamo.fechaCobro = new Date().toISOString().split('T')[0];
+                
+                // Mover al historial
+                historialDeudas.push(prestamo);
+                prestamos.splice(prestamoIndex, 1);
+                
+                // Guardar y actualizar
+                guardarDatos();
+                actualizarInterfaz();
+                
+                // Si el modal está abierto, actualizar la tabla
+                if (document.getElementById('modalGestionDeudas').classList.contains('show')) {
+                    cargarTablaPrestamos();
+                    cargarTablaHistorial();
+                }
+                
+                alert('Préstamo marcado como cobrado.');
+            }
+        }
+
+        // Cargar tabla de deudas
+        function cargarTablaDeudas() {
+            const tablaDeudas = document.getElementById('tablaDeudas');
+            tablaDeudas.innerHTML = '';
+            
+            if (deudas.length === 0) {
+                tablaDeudas.innerHTML = '<tr><td colspan="6" class="text-center">No hay deudas registradas</td></tr>';
+                return;
+            }
+            
+            deudas.forEach(deuda => {
+                const fila = document.createElement('tr');
+                if (deuda.estado === 'pendiente') {
+                    fila.classList.add('deuda-pendiente');
+                }
+                
+                fila.innerHTML = `
+                    <td>${deuda.deudor}</td>
+                    <td>${deuda.concepto}</td>
+                    <td>$${deuda.monto.toFixed(2)}</td>
+                    <td>${deuda.fecha}</td>
+                    <td>${deuda.fechaLimite || 'N/A'}</td>
+                    <td>
+                        <button class="btn btn-sm btn-success" onclick="pagarDeuda(${deuda.id})">
+                            <i class="bi bi-check-circle"></i> Pagar
+                        </button>
+                    </td>
+                `;
+                
+                tablaDeudas.appendChild(fila);
+            });
+        }
+
+        // Cargar tabla de préstamos
+        function cargarTablaPrestamos() {
+            const tablaPrestamos = document.getElementById('tablaPrestamos');
+            tablaPrestamos.innerHTML = '';
+            
+            if (prestamos.length === 0) {
+                tablaPrestamos.innerHTML = '<tr><td colspan="6" class="text-center">No hay préstamos registrados</td></tr>';
+                return;
+            }
+            
+            prestamos.forEach(prestamo => {
+                const fila = document.createElement('tr');
+                if (prestamo.estado === 'pendiente') {
+                    fila.classList.add('prestamo-pendiente');
+                }
+                
+                fila.innerHTML = `
+                    <td>${prestamo.acreedor}</td>
+                    <td>${prestamo.concepto}</td>
+                    <td>$${prestamo.monto.toFixed(2)}</td>
+                    <td>${prestamo.fecha}</td>
+                    <td>${prestamo.fechaLimite || 'N/A'}</td>
+                    <td>
+                        <button class="btn btn-sm btn-info" onclick="cobrarPrestamo(${prestamo.id})">
+                            <i class="bi bi-cash-coin"></i> Cobrar
+                        </button>
+                    </td>
+                `;
+                
+                tablaPrestamos.appendChild(fila);
+            });
+        }
+
+        // Cargar tabla de historial
+        function cargarTablaHistorial() {
+            const tablaHistorial = document.getElementById('tablaHistorialDeudas');
+            tablaHistorial.innerHTML = '';
+            
+            if (historialDeudas.length === 0) {
+                tablaHistorial.innerHTML = '<tr><td colspan="6" class="text-center">No hay historial de deudas</td></tr>';
+                return;
+            }
+            
+            // Ordenar por fecha (más recientes primero)
+            const historialOrdenado = [...historialDeudas].sort((a, b) => b.timestamp - a.timestamp);
+            
+            historialOrdenado.forEach(item => {
+                const fila = document.createElement('tr');
+                if (item.estado === 'pagada' || item.estado === 'cobrado') {
+                    fila.classList.add('deuda-pagada');
+                }
+                
+                fila.innerHTML = `
+                    <td>${item.tipo === 'deuda' ? 'Deuda' : 'Préstamo'}</td>
+                    <td>${item.tipo === 'deuda' ? item.deudor : item.acreedor}</td>
+                    <td>${item.concepto}</td>
+                    <td>$${item.monto.toFixed(2)}</td>
+                    <td>${item.fecha}</td>
+                    <td><span class="badge bg-success">${item.estado}</span></td>
+                `;
+                
+                tablaHistorial.appendChild(fila);
+            });
+        }
+
+        // Inicializar gráfico de métricas (ejemplo)
+        function inicializarGrafico() {
+            const ctx = document.getElementById('graficoAccesorios').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Disponible', 'En reparación', 'Vendido'],
+                    datasets: [{
+                        data: [65, 15, 20],
+                        backgroundColor: [
+                            '#FF7F00',
+                            '#17a2b8',
+                            '#28a745'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Event listener para el modal de historial (se carga cuando se abre el modal)
+        document.getElementById('modalHistorial').addEventListener('show.bs.modal', function() {
+            const historialBody = document.getElementById('historialBody');
+            historialBody.innerHTML = '';
+            
+            // Ordenar movimientos por fecha (más recientes primero)
+            const movimientosOrdenados = [...movimientos].sort((a, b) => b.timestamp - a.timestamp);
+            
+            if (movimientosOrdenados.length === 0) {
+                historialBody.innerHTML = '<tr><td colspan="4" class="text-center">No hay movimientos registrados</td></tr>';
+                return;
+            }
+            
+            movimientosOrdenados.forEach(mov => {
+                const fila = document.createElement('tr');
+                
+                fila.innerHTML = `
+                    <td>${mov.fecha}</td>
+                    <td><span class="badge ${mov.tipo === 'ingreso' ? 'bg-success' : 'bg-danger'}">${mov.tipo === 'ingreso' ? 'Ingreso' : 'Retiro'}</span></td>
+                    <td>${mov.concepto}</td>
+                    <td class="${mov.tipo === 'ingreso' ? 'text-success' : 'text-danger'}">${mov.tipo === 'ingreso' ? '+' : '-'}$${mov.monto.toFixed(2)}</td>
+                `;
+                
+                historialBody.appendChild(fila);
+            });
+        });
+
+        // Event listener para el modal de gestión de deudas
+        document.getElementById('modalGestionDeudas').addEventListener('show.bs.modal', function() {
+            cargarTablaDeudas();
+            cargarTablaPrestamos();
+            cargarTablaHistorial();
+        });
+    </script>
 </body>
-
 </html>
