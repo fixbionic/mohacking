@@ -523,6 +523,177 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
+// Función para verificar duplicados
+function verificarDuplicado(nuevoRegistro) {
+    const reparaciones = obtenerReparacionesDesdeLocalStorage();
+    
+    return reparaciones.some(registro => 
+        registro.fecha === nuevoRegistro.fecha &&
+        registro.cliente === nuevoRegistro.cliente &&
+        registro.telefono === nuevoRegistro.telefono &&
+        registro.modelo === nuevoRegistro.modelo &&
+        registro.reparacion === nuevoRegistro.reparacion &&
+        registro.tecnico === nuevoRegistro.tecnico &&
+        registro.precio === nuevoRegistro.precio
+    );
+}
+
+// Función para eliminar duplicados exactos
+function eliminarDuplicadosExactos() {
+    const reparaciones = obtenerReparacionesDesdeLocalStorage();
+    const registrosUnicos = [];
+    const registrosVistos = new Set();
+    
+    reparaciones.forEach(registro => {
+        // Crear una clave única basada en todos los campos
+        const clave = `${registro.fecha}-${registro.cliente}-${registro.telefono}-${registro.modelo}-${registro.reparacion}-${registro.tecnico}-${registro.precio}`;
+        
+        if (!registrosVistos.has(clave)) {
+            registrosVistos.add(clave);
+            registrosUnicos.push(registro);
+        }
+    });
+    
+    // Guardar solo los registros únicos
+    localStorage.setItem('reparaciones', JSON.stringify(registrosUnicos));
+    return registrosUnicos.length !== reparaciones.length; // Retorna true si se eliminaron duplicados
+}
+
+// Función para obtener reparaciones desde localStorage
+function obtenerReparacionesDesdeLocalStorage() {
+    return JSON.parse(localStorage.getItem('reparaciones') || '[]');
+}
+
+// Modificar la función agregarReparacion (o donde guardas los registros)
+function agregarReparacion(reparacion) {
+    // Primero verificar si es un duplicado
+    if (verificarDuplicado(reparacion)) {
+        alert('Esta reparación ya existe en el sistema. No se agregará el duplicado.');
+        return false;
+    }
+    
+    // Si no es duplicado, proceder a guardar
+    const reparaciones = obtenerReparacionesDesdeLocalStorage();
+    reparaciones.push(reparacion);
+    localStorage.setItem('reparaciones', JSON.stringify(reparaciones));
+    
+    // Después de agregar, verificar y eliminar cualquier duplicado
+    eliminarDuplicadosExactos();
+    
+    return true;
+}
+
+// Llamar a eliminarDuplicadosExactos al cargar la página para limpiar duplicados existentes
+document.addEventListener('DOMContentLoaded', function() {
+    const seEliminaronDuplicados = eliminarDuplicadosExactos();
+    if (seEliminaronDuplicados) {
+        console.log('Se eliminaron registros duplicados al cargar la página.');
+        // Opcional: refrescar la tabla si es necesario
+        cargarTablaReparaciones();
+    }
+});
+
+// === FUNCIONES PARA MANEJO DE DUPLICADOS (INCLUYENDO HORA Y CLIENTE) ===
+function verificarDuplicado(nuevoRegistro) {
+    const reparaciones = JSON.parse(localStorage.getItem('reparaciones') || '[]');
+    
+    return reparaciones.some(registro => 
+        registro.fecha === nuevoRegistro.fecha &&
+        registro.hora === nuevoRegistro.hora &&
+        registro.cliente.toLowerCase() === nuevoRegistro.cliente.toLowerCase() &&
+        registro.telefono === nuevoRegistro.telefono &&
+        registro.modelo.toLowerCase() === nuevoRegistro.modelo.toLowerCase() &&
+        registro.reparacion === nuevoRegistro.reparacion &&
+        registro.tecnico === nuevoRegistro.tecnico &&
+        parseFloat(registro.precio) === parseFloat(nuevoRegistro.precio)
+    );
+}
+
+function eliminarDuplicadosExactos() {
+    const reparaciones = JSON.parse(localStorage.getItem('reparaciones') || '[]');
+    const registrosUnicos = [];
+    const registrosVistos = new Set();
+    
+    let duplicadosEliminados = 0;
+    
+    reparaciones.forEach(registro => {
+        // Crear una clave única basada en todos los campos incluyendo hora y cliente
+        const clave = `${registro.fecha}-${registro.hora}-${registro.cliente.toLowerCase()}-${registro.telefono}-${registro.modelo.toLowerCase()}-${registro.reparacion}-${registro.tecnico}-${parseFloat(registro.precio)}`;
+        
+        if (!registrosVistos.has(clave)) {
+            registrosVistos.add(clave);
+            registrosUnicos.push(registro);
+        } else {
+            duplicadosEliminados++;
+            console.log('Duplicado eliminado:', registro);
+        }
+    });
+    
+    // Guardar solo los registros únicos
+    localStorage.setItem('reparaciones', JSON.stringify(registrosUnicos));
+    
+    if (duplicadosEliminados > 0) {
+        console.log(`Se eliminaron ${duplicadosEliminados} registros duplicados.`);
+    }
+    
+    return duplicadosEliminados > 0;
+}
+
+// Sobrescribir la función agregarFila para verificar duplicados
+const originalAgregarFila = agregarFila;
+agregarFila = function(data, guardar = true) {
+    if (!$('tabla-reparaciones')) return;
+
+    // Verificar si es un duplicado antes de agregar
+    if (guardar && verificarDuplicado(data)) {
+        alert('⚠️ Esta reparación ya existe en el sistema. No se agregará el duplicado.');
+        return false;
+    }
+    
+    // Llamar a la función original
+    originalAgregarFila(data, guardar);
+    
+    if (guardar) {
+        // Eliminar duplicados después de agregar
+        eliminarDuplicadosExactos();
+    }
+    
+    return true;
+};
+
+// Llamar a eliminarDuplicadosExactos al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    // Pequeña demora para asegurar que todo esté cargado
+    setTimeout(() => {
+        const seEliminaronDuplicados = eliminarDuplicadosExactos();
+        if (seEliminaronDuplicados) {
+            console.log('Se eliminaron registros duplicados al cargar la página.');
+            // Refrescar la tabla
+            if ($('tabla-reparaciones')) $('tabla-reparaciones').innerHTML = '';
+            cargarDesdeLocalStorage();
+            actualizarMetricas();
+        }
+    }, 500);
+});
+
+// También verificar duplicados al importar datos
+const originalManejarImportacionJSON = manejarImportacionJSON;
+manejarImportacionJSON = function(e) {
+    originalManejarImportacionJSON(e);
+    
+    // Después de importar, verificar y eliminar duplicados
+    setTimeout(() => {
+        const seEliminaronDuplicados = eliminarDuplicadosExactos();
+        if (seEliminaronDuplicados) {
+            console.log('Se eliminaron duplicados después de importar.');
+            if ($('tabla-reparaciones')) $('tabla-reparaciones').innerHTML = '';
+            cargarDesdeLocalStorage();
+            actualizarMetricas();
+            alert('Se importaron los datos y se eliminaron registros duplicados.');
+        }
+    }, 300);
+};
+
 // === EXPORTACIÓN DE IMAGEN/FACTURA ===
 function exportarSeleccionadaComoImagen(tipo = null) {
   if (!filaSeleccionada) return alert('Selecciona una fila');
